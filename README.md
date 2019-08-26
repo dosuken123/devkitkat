@@ -1,0 +1,195 @@
+# Michi
+
+Michi is a framework for development kits. It's a smart helper to let you
+bootstrap separate services for running a complex application easily.
+This is especially helpful for local development that runs/compiles everything from source code.
+
+## Features
+
+This tool provides the following functionalities:
+
+- Easy configuration, easiser than docker-compose.
+- Customizable/Flexible scripts for controlling services.
+- Logging command output dy default.
+- Respect the best practice architecture of Cloud Native.
+- Easy to run services in containers (Not available yet).
+- Distrubte machine resources to the cloud VM (Not available yet).
+
+## The only config file - `.michi.yml`
+
+The only config file `.michi.yml` has to be placed at the root directory where you want to
+download/prepare services. These are available keys.
+
+|Key                               |Type        |Required|Default|Description|
+|---                               |---         |---     |---|---|
+|`version:`                        |String      |No      |The latest version|The version of the `.michi.yml`|
+|`application:`                    |String      |Yes     |-|The name of the application that consists of the services|
+|`services:`                       |Hash        |Yes     |-|The services to run the application|
+|`services:service-name`           |Hash        |Yes     |-|The service name e.g. `rails`, `db`, `redis`|
+|`services:service-name:repo: url` |Hash        |No      |-|The URL of the repository|
+|`services:service-name:key: value`|Hash        |Yes     |-|The key and value of the user-defined environment variable. e.g. `port: 1234`. If no parameters is needed, fill an empty hash `{}`.|
+|`global:`                         |Hash        |No      |-|The global parameters|
+|`global:env:`                     |Hash        |No      |-|The global user-defined environment variables|
+|`global:env:key: value`           |Hash        |No      |-|The key and value of the user-defined environment variable. e.g. `POSTGRES_BIN_DIR: /usr/lib/postgresql/10/bin/`.|
+|`groups:`                         |Hash        |No      |-|The groups of the services|
+|`groups:group-name`               |Hash        |Yes (If `groups:` defined)|-|The name of the group|
+|`groups:group-name: service-names`|String Array|Yes (If `groups:` defined)|-|The service names of the group|
+
+There are pre-occupied special keys, please do not use these keys in your config file: `services:system`, `services:self`
+
+## Sample `.michi.yml`
+
+```yaml
+application: awesome-app
+
+services:
+  web:
+    repo: https://gitlab.com/gitlab-org/gitlab-ce.git
+    host: localhost
+    port: 1234
+  db:
+    host: localhost
+    port: 9999
+```
+
+## Service structure
+
+Each service is stored in the following directories:
+
+|Path                               |Description|
+|---                                |---|
+|`services/service-name/src/`| The directory for source code of the service |
+|`services/service-name/script/`| The directory for scripts that controls the service e.g. start, stop, etc.|
+|`services/service-name/data/`| The directory for storing permanent data e.g. database.|
+|`services/service-name/cache/`| The directory for storing ephemeral data to optimize service boot.|
+|`services/service-name/log/`| The directory for logged console output.|
+|`services/service-name/example/`| The directory for extra example scripts that shouldn't be managed in the source repository. |
+|`services/service-name/dockerfile/`| The directory for the docker file that builds the image for the service|
+
+## How to write scripts
+
+Since your service's startup command could vary per your application preference,
+you have to define start/stop/configure/etc scripts manually.
+
+You can add a script with the following command `michi add-script-*script-name* *service-or-group-name*`.
+It creates a script file at `services/service-name/script/script-name`, and you
+have to code the script details.
+
+As the best practice, you should initialize a script dir at first, to do so, execute
+`michi add-script-set *service-or-group-name*`. It adds the following basic scripts that you'd need
+
+- configure/unconfigure ... Configure/Unconfigure the service (Typically, initializes the config file, etc)
+- start/stop ... Start/Stop the service
+
+You can also define system scripts that does not belong to a specific service.
+There is a handy command `michi add-script-*script-name* system` and it adds a script in `services/system/script` dir.
+. For the system script execution, you can ommit `*service-or-group-name*` from
+the command line e.g. `michi add-test-domain` or `michi add-test-domain system`. 
+As always, log files are stored in `services/system/log` (See more [Service structure](#service-structure))
+
+## Predefined scripts
+
+Michi provides predefined scripts that are useful in developments.
+
+|Script name |Available options        |Description|
+|---|---|---|
+|`pull`|`GIT_DEPTH` ... Speicify git-depth|Pull source code from the `services:service-name:repo:`|
+|`download`|N/A|Download source code from the `services:service-name:repo:`|
+|`clean`|N/A|Remove all files from `data`, `cache`, `log` and `src` dirs|
+|`docker-build`|`TAG`|Build a docker image|
+|`docker-push`|`REGISTRY`|Push a docker image|
+|`add-user`|`TAG`|Add a user to the current system (It's useful for containerized images)|
+|`poop`|N/A|:poop:|
+
+## Predefined group names
+
+- `all` ... All defined services in `.michi.yml`
+
+## Predefined variables that injected into scripts
+
+- `MI_USER_NAME` ... The LINUX user name of the executor.
+- `MI_USER_ID` ... The LINUX user id of the executor.
+- `MI_GROUP_ID` ... The LINUX group id of the executor.
+- `MI_${service}_DIR` ... The root directory path of the service.
+- `MI_${service}_SCRIPT_DIR` ... The script directory path of the service.
+- `MI_${service}_SRC_DIR` ... The source directory path of the service.
+- `MI_${service}_CACHE_DIR` ... The cache directory path of the service.
+- `MI_${service}_DATA_DIR` ... The data directory path of the service.
+- `MI_${service}_LOG_DIR` ... The log directory path of the service.
+- `MI_${service}_EXAMPLE_DIR` ... The example directory path of the service.
+- `MI_${service}_IMAGE_NAME` ... The docker image name of the service.
+- `MI_${service}_CONTAINER_NAME` ... The docker container name of the service.
+- `MI_${service}_${user_defined_variable_key}` ... The value of the user-defined variable.
+
+NOTE:
+ - `service` is the *uppercase* service *name*. e.g. if the service name is
+  `rails`, `MI_RAILS_DIR` is the root directory path of the service.
+ - `user_defined_variable_key` is *uppercase* e.g. `MI_RAILS_HOST`
+ - You can also use `SELF` instead of specifying a service name.
+   The `SELF` indicates that it's a context specific parameter, for example,
+   if you run a script for `workhorse` service, `MI_SELF_DIR` is `services/workhorse`,
+   whereas, if you run a script for `gitaly` service, `MI_SELF_DIR` is `services/gitaly`.
+
+## How to control services
+
+Basically, command execution follows the below convention.
+
+`michi *script-name* *service-or-group-name*`
+
+For example, if you want to start `rails` service, your command would look like
+
+`michi start rails`
+
+, Or, if you want to start all services belong to a particular group,
+
+`michi start backend`
+
+, Or, if you want to pass multiple services, use comma separated service names,
+
+`michi start rails,postgres,redis`
+
+, Or, if you want to exclude a specific service from a group,
+
+`michi start backend --exclude redis`
+
+## Sample commands
+
+```
+michi pull default                          # Pull source code for the default group
+michi configure default                     # It configures source code for the default group
+michi start postgresql,redis,gitaly         # It starts `postgresql`, `redis` and `gitaly` services.
+michi seed rails                            # It Seeds for `rails` service
+michi start default                         # It starts services of the `default` group
+```
+
+## Options for `michi`
+
+- `--path /path/to/the` ... The root directory that contains `.michi.yml` and manage the service dirs.
+- `--env KEY=VAR` ... The additional environment variables for services.
+- `--exclude service-name` ... The excluded service from the group.
+
+Example:
+
+`michi start rails --path $HOME/awesome-app-dev-kit/ --env AWS_CRED=XXXXX`
+
+## Installation
+
+    $ gem install michi
+
+## Development
+
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+
+To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+
+## Contributing
+
+Bug reports and pull requests are welcome on GitLab at https://gitlab.com/dosuken123/michi. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+
+## License
+
+The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
+## Code of Conduct
+
+Everyone interacting in the Michi project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/michi/blob/master/CODE_OF_CONDUCT.md).
