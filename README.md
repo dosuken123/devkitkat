@@ -1,12 +1,12 @@
 # Michi
 
-Michi is a framework for development kits. It's a smart helper to let you
+Michi is a framework for development kits. It's a smart helper that lets you
 bootstrap separate services for running a complex application easily.
 This is especially helpful for local development that runs/compiles everything from source code.
 
 ## Features
 
-This tool provides the following functionalities:
+This tool provides the following features:
 
 - Easy configuration, easiser than docker-compose.
 - Customizable/Flexible scripts for controlling services.
@@ -20,20 +20,27 @@ This tool provides the following functionalities:
 The only config file `.michi.yml` has to be placed at the root directory where you want to
 download/prepare services. These are available keys.
 
-|Key                               |Type        |Required|Default|Description|
-|---                               |---         |---     |---|---|
-|`version:`                        |String      |No      |The latest version|The version of the `.michi.yml`|
-|`application:`                    |String      |Yes     |-|The name of the application that consists of the services|
-|`services:`                       |Hash        |Yes     |-|The services to run the application|
-|`services:service-name`           |Hash        |Yes     |-|The service name e.g. `rails`, `db`, `redis`|
-|`services:service-name:repo: url` |Hash        |No      |-|The URL of the repository|
-|`services:service-name:key: value`|Hash        |Yes     |-|The key and value of the user-defined environment variable. e.g. `port: 1234`. If no parameters is needed, fill an empty hash `{}`.|
-|`global:`                         |Hash        |No      |-|The global parameters|
-|`global:env:`                     |Hash        |No      |-|The global user-defined environment variables|
-|`global:env:key: value`           |Hash        |No      |-|The key and value of the user-defined environment variable. e.g. `POSTGRES_BIN_DIR: /usr/lib/postgresql/10/bin/`.|
-|`groups:`                         |Hash        |No      |-|The groups of the services|
-|`groups:group-name`               |Hash        |Yes (If `groups:` defined)|-|The name of the group|
-|`groups:group-name: service-names`|String Array|Yes (If `groups:` defined)|-|The service names of the group|
+|Key                                 |Type        |Required|Default|Description|
+|---                                 |---         |---     |---|---|
+|`version:`                          |String      |No      |The latest version|The version of the `.michi.yml`|
+|`application:`                      |String      |Yes     |-|The name of the application that consists of the services|
+|`services:`                         |Hash        |Yes     |-|The services to run the application|
+|`services:name`                     |Hash        |Yes     |-|The service name e.g. `rails`, `db`, `redis`|
+|`services:name:repo: <value>`       |Hash        |No      |-|The URL of the repository|
+|`services:name:port: <value>`       |Hash        |No      |-|The port of the service|
+|`services:name:machine`             |Hash        |No      |-|The [machine](#machine-image) for the service|
+|`services:name:machine:location`    |String      |No      |-|The location of the machine. One of the `local`, `docker` or `digital-ocean`|
+|`services:name:machine:image`       |String      |No      |-|The virtual image for the machine|
+|`services:name:env:<key>: <value>`  |Hash        |Yes     |-|The key and value of the user-defined environment variable. e.g. `port: 1234`. If no parameters is needed, fill an empty hash `{}`.|
+|`global:`                           |Hash        |No      |-|The global parameters|
+|`global:env:`                       |Hash        |No      |-|The global user-defined environment variables|
+|`global:env:<key>: <value>`         |Hash        |No      |-|The key and value of the user-defined environment variable. e.g. `POSTGRES_BIN_DIR: /usr/lib/postgresql/10/bin/`.|
+|`global:machine:`                   |Hash        |No      |-|The global [machine](#machine-image) to be used for services|
+|`global:machine:location`           |String      |No      |-|The location of the machine. One of the `local`, `docker` or `digital-ocean`|
+|`global:machine:image`              |String      |No      |-|The virtual image for the machine|
+|`groups:`                           |Hash        |No      |-|The groups of the services|
+|`groups:group-name`                 |Hash        |Yes (If `groups:` defined)|-|The name of the group|
+|`groups:group-name: names`          |String Array|Yes (If `groups:` defined)|-|The service names of the group|
 
 There are pre-occupied special keys, please do not use these keys in your config file: `services:system`, `services:self`
 
@@ -42,15 +49,36 @@ There are pre-occupied special keys, please do not use these keys in your config
 ```yaml
 application: awesome-app
 
+global:
+  machine:
+    type: docker
+    image: sm-common-ruby-on-rails
+
 services:
   web:
     repo: https://gitlab.com/gitlab-org/gitlab-ce.git
-    host: localhost
     port: 1234
   db:
-    host: localhost
     port: 9999
 ```
+
+## Machine image
+
+When you run your application with docker containers, you might need to write up
+[Dockerfile](https://docs.docker.com/engine/reference/builder/) and build the image at first,
+this often is time consuming and repeatable task.
+To avoid the cumbersome step, michi provides some useful pre-built machines, which
+works with your application on the fly.
+These images are defined in michi as a ruby script and easy to customize/extend.
+If you don't find useful machines, you can still define it in `services/service-name/dockerfile` directory,
+however, please consider contributing to this repository for the other people who
+would be stuck into the same pitfall/situation.
+
+- `Michi::Machine::Image::CommonRubyOnRails`
+  - `author`
+  - `homepage`
+- `Michi::Machine::Image::CommonPHP`
+  - etc
 
 ## Service structure
 
