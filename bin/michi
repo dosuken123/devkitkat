@@ -2,5 +2,4 @@
 #!/usr/bin/env ruby
 require "michi"
 
-ct = Michi::Test.new
-ct.ho
+Michi::Command.execute

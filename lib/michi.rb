@@ -1,11 +1,18 @@
 require "michi/version"
+require "michi/config"
 
 module Michi
-  class Error < StandardError; end
+  class Command
+    class << self
+      def execute
+        puts "config: #{config}"
+      end
 
-  class Test
-    def ho
-      puts "wan wan"
+      private
+
+      def config
+        @config ||= Config.new
+      end
     end
   end
 end
