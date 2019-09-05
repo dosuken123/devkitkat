@@ -1,9 +1,13 @@
 module Michi
   class Config
     class Keys
-      class Global
+      class Services
         include Keys::Concerns::Keyable
         include Keys::Concerns::Parentable
+
+        parent_options do
+          wildcard
+        end
       end
     end
   end

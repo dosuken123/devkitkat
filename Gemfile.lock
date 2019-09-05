@@ -25,6 +25,7 @@ GEM
     pry-nav (0.3.0)
       pry (>= 0.9.10, < 0.13.0)
     rake (10.5.0)
+    require_all (2.0.0)
     rspec (3.8.0)
       rspec-core (~> 3.8.0)
       rspec-expectations (~> 3.8.0)
@@ -53,6 +54,7 @@ DEPENDENCIES
   pry (~> 0.12.2)
   pry-nav (~> 0.3.0)
   rake (~> 10.0)
+  require_all (~> 2.0.0)
   rspec (~> 3.0)
 
 BUNDLED WITH

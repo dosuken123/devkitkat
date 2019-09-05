@@ -42,4 +42,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry", "~> 0.12.2"
   spec.add_development_dependency "pry-nav", "~> 0.3.0"
   spec.add_development_dependency "activesupport", "~> 6.0.0"
+  spec.add_development_dependency "require_all", "~> 2.0.0"
 end

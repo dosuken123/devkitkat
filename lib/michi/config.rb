@@ -15,7 +15,6 @@ module Michi
     def load
       hash = Parser.parse(config_path)
       @keys = Keys.new(hash)
-      self.new(config)
     end
 
     def config_path
