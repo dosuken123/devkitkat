@@ -1,9 +1,7 @@
-require "michi/config/keys/concerns/keyable"
-
 module Michi
   class Config
     class Keys
-      class Application
+      class Global
         include Keys::Concerns::Keyable
       end
     end

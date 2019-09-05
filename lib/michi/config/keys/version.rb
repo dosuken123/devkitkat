@@ -2,9 +2,7 @@ module Michi
   class Config
     class Keys
       class Version
-        def initialize(value)
-          
-        end
+        include Keys::Concerns::Keyable
       end
     end
   end

@@ -1,6 +1,7 @@
 require 'active_support/inflector'
 require "michi/config/keys/application"
 require "michi/config/keys/version"
+require "michi/config/keys/global"
 
 module Michi
   class Config

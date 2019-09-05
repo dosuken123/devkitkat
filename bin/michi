@@ -1,5 +1,5 @@
 
 #!/usr/bin/env ruby
-require "michi"
+require "michi/command"
 
 Michi::Command.execute
