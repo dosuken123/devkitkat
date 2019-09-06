@@ -1,0 +1,12 @@
+application: awesome-app
+
+global:
+  environment:
+    image: common-ruby-on-rails
+
+services:
+  web:
+    repo: https://gitlab.com/gitlab-org/gitlab-ce.git
+    port: 1234
+  db:
+    port: 9999
