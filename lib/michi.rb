@@ -5,8 +5,14 @@ module Michi
   class Command
     MICHI_FILE_NAME = '.michi.yml'
 
-    def execute
+    def execute(args = nil)
       puts "config: #{config}"
+
+      options = args.select { |arg| %r{^--}.match(arg) }
+      commands = args - options
+
+      puts "options: #{options}"
+      puts "commands: #{commands}"
     end
 
     private

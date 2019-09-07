@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+require "bundler/setup"
 require "michi"
+require 'pry'
 
-Michi::Command.new.execute
+Michi::Command.new.execute(ARGV)

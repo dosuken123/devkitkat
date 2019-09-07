@@ -125,6 +125,7 @@ Michi provides predefined scripts that are useful in common development scenario
 |`docker-build` |`TAG`                    |Build a docker image|
 |`docker-push`  |`REGISTRY`               |Push a docker image|
 |`add-user`     |`TAG`                    |Add a user to the current system (It's useful for containerized images)|
+|`add-script`   |`--basic`                |Add a script to services|
 |`poop`         |N/A                      |:poop:|
 
 ## Predefined group names
