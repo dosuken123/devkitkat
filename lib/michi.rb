@@ -1,27 +1,38 @@
 require "michi/version"
+require "michi/service"
+require "michi/target"
 require 'yaml'
 
 module Michi
   class Command
     MICHI_FILE_NAME = '.michi.yml'
 
-    def execute(args = nil)
+    attr_reader :config, :options, :script, :target
+
+    def initialize(args = nil)
+      @config = load_config
+      @options = args.select { |arg| %r{^--}.match(arg) }
+      @script, @target = args - options
+
       puts "config: #{config}"
-
-      options = args.select { |arg| %r{^--}.match(arg) }
-      commands = args - options
-
       puts "options: #{options}"
-      puts "commands: #{commands}"
+      puts "script: #{script}"
+      puts "target: #{target}"
+    end
+
+    def execute
+      services = Michi::Target.new(self).resolve
+
+      services.each do |service| # TODO: Concurrent run
+        service.execute
+      end
     end
 
     private
 
-    def config
-      return @config if defined?(@config)
-
+    def load_config
       File.read(config_path).yield_self do |content|
-        @config = YAML.load(content)
+        YAML.load(content)
       end
     end
 
