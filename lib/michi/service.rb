@@ -5,7 +5,12 @@ module Michi
   class Service
     attr_reader :name, :command
 
-    PREDEFINED_SCRIPTS = %w[add-script]
+    PREDEFINED_SCRIPTS = %w[add-script].freeze
+
+    SUPPORTED_OPTIONS = {
+      add_script: %w[--basic]
+    }
+
     BASIC_SCRIPTS = %w[configure unconfigure start stop]
     DIR_NAMES = %w[src script data cache log example dockerfile].freeze
 
@@ -38,6 +43,14 @@ module Michi
 
     def add_script
       FileUtils.mkdir_p(script_path)
+
+      if command.options.any?
+        command.options.each do |opt|
+          unless SUPPORTED_OPTIONS[__method__.to_sym].include?(opt)
+            raise ArgumentError, "The option #{opt} is not supported"
+          end
+        end
+      end
 
       if command.options.include?('--basic')
         BASIC_SCRIPTS.each do |basic_script|
