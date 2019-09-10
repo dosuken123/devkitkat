@@ -1,5 +1,9 @@
 application: awesome-app
 
+groups:
+  backend:
+    - db
+
 global:
   environment:
     image: common-ruby-on-rails

@@ -32,7 +32,7 @@ module Michi
     end
 
     def services_for_group(group)
-      groups[group]
+      groups.fetch(group, [])
     end
 
     def service_for_target
@@ -40,7 +40,7 @@ module Michi
     end
 
     def find_group
-      groups.find { |group| group == @command.target }
+      groups.keys.find { |group| group == @command.target }
     end
   end
 end
