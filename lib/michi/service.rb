@@ -5,7 +5,7 @@ module Michi
   class Service
     attr_reader :name, :command
 
-    PREDEFINED_SCRIPTS = %w[add-script].freeze
+    PREDEFINED_SCRIPTS = %w[add-script clone].freeze
 
     SUPPORTED_OPTIONS = {
       add_script: %w[--basic]
@@ -13,6 +13,7 @@ module Michi
 
     BASIC_SCRIPTS = %w[configure unconfigure start stop]
     DIR_NAMES = %w[src script data cache log example dockerfile].freeze
+    SERVICE_PROPERTIES = %w[repo host port]
 
     SCRIPT_TEMPLATE = <<-EOS
 #!/bin/bash
@@ -30,6 +31,20 @@ module Michi
       define_method :"#{dir}_path" do
         File.join(Dir.pwd, 'services', name, dir)
       end
+    end
+
+    SERVICE_PROPERTIES.each do |property|
+      define_method :"#{property}_defined?" do
+        service_config.key?(property)
+      end
+
+      define_method :"#{property}" do
+        service_config[property]
+      end
+    end
+
+    def service_config
+      command.config.dig('services', name)
     end
 
     def execute
@@ -59,6 +74,13 @@ module Michi
           File.chmod(0777, file_path)
         end
       end
+    end
+
+    def clone
+      return unless repo_defined?
+
+      # TODO: Clone repo via rugged
+      repo
     end
   end
 end

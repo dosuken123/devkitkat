@@ -119,6 +119,7 @@ Michi provides predefined scripts that are useful in common development scenario
 
 |Script name    |Available options        |Description|
 |---            |---                      |---|
+|`clone`        |`GIT_DEPTH` ... Speicify git-depth|Clone source code from the `services:<name>:repo:`|
 |`pull`         |`GIT_DEPTH` ... Speicify git-depth|Pull source code from the `services:<name>:repo:`|
 |`download`     |N/A                      |Download source code from the `services:<name>:repo:`|
 |`clean`        |N/A                      |Remove all files from `data`, `cache`, `log` and `src` dirs|
