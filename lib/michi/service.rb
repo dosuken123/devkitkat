@@ -8,7 +8,7 @@ module Michi
     PREDEFINED_SCRIPTS = %w[add-script clone].freeze
 
     SUPPORTED_OPTIONS = {
-      add_script: %w[--basic]
+      add_script: %w[--basic --name]
     }
 
     BASIC_SCRIPTS = %w[configure unconfigure start stop]
@@ -56,23 +56,31 @@ module Michi
       end
     end
 
-    def add_script
-      FileUtils.mkdir_p(script_path)
-
-      if command.options.any?
-        command.options.each do |opt|
-          unless SUPPORTED_OPTIONS[__method__.to_sym].include?(opt)
-            raise ArgumentError, "The option #{opt} is not supported"
-          end
+    def validate_options!(script)
+      command.options.each do |key, value|
+        unless SUPPORTED_OPTIONS[script.to_sym].include?(key)
+          raise ArgumentError, "The option #{key} is not supported"
         end
       end
+    end
 
-      if command.options.include?('--basic')
-        BASIC_SCRIPTS.each do |basic_script|
-          file_path = File.join(script_path, basic_script)
-          File.write(file_path, SCRIPT_TEMPLATE)
-          File.chmod(0777, file_path)
-        end
+    def add_script
+      validate_options!(__method__) if command.options.any?
+
+      names = if command.options.key?('--basic')
+                BASIC_SCRIPTS
+              elsif command.options.key?('--name')
+                [command.options['--name']]
+              else
+                raise ArgumentError, "#{__method__}: Name is not specified"
+              end
+
+      FileUtils.mkdir_p(script_path)
+
+      names.each do |name|
+        file_path = File.join(script_path, name)
+        File.write(file_path, SCRIPT_TEMPLATE)
+        File.chmod(0777, file_path)
       end
     end
 

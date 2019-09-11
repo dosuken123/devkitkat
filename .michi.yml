@@ -10,7 +10,7 @@ global:
 
 services:
   web:
-    repo: https://gitlab.com/gitlab-org/gitlab-ce.git
+    repo: https://github.com/dosuken123/state_machine.git
     port: 1234
   db:
     port: 9999

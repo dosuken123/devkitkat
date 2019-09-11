@@ -11,13 +11,19 @@ module Michi
 
     def initialize(args = nil)
       @config = load_config
-      @options = args.select { |arg| %r{^--}.match(arg) }
+      options = args.select { |arg| %r{^--}.match(arg) }
       @script, @target = args - options
 
-      puts "config: #{config}"
-      puts "options: #{options}"
-      puts "script: #{script}"
-      puts "target: #{target}"
+      @options = options.inject({}) do |hash, opt|
+        key, value = opt.split('=')
+        hash[key] = value
+        hash
+      end
+
+      puts "config: #{@config}"
+      puts "options: #{@options}"
+      puts "script: #{@script}"
+      puts "target: #{@target}"
     end
 
     def execute

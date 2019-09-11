@@ -23,7 +23,8 @@ download/prepare services. These are available keys.
 |Key                                         |Type        |Required|Default|Description|
 |---                                         |---         |---     |---|---|
 |`version:`                                  |String      |No      |The latest version|The version of the `.michi.yml`|
-|`application:`                              |String      |Yes     |-|The name of the application that consists of the services|
+|`application:name:`                         |String      |Yes     |-|The name of the application that consists of the services|
+|`application:environment:location`          |String      |Yes     |-|The location of the environment that the services run|
 |`services:`                                 |Hash        |Yes     |-|The services to run the application|
 |`services:<name>`                           |Hash        |Yes     |-|The service name e.g. `rails`, `db`, `redis`|
 |`services:<name>:repo: <value>`             |Hash        |No      |-|The git URL of the repository|
@@ -43,11 +44,13 @@ There are pre-occupied special keys, please do not use these keys in your config
 ## Sample `.michi.yml`
 
 ```yaml
-application: awesome-app
+application:
+  name: awesome-app
+  environment:
+    location: local/docker/cloud
 
 global:
-  environment:
-    image: common-ruby-on-rails
+  image: common-ruby-on-rails
 
 services:
   web:
@@ -93,8 +96,8 @@ Each service is stored in the following directories:
 Since your service's startup command could vary per your application preference,
 you have to define start/stop/configure/etc scripts manually.
 
-You can add a script with the following command `michi add-script <name> <target>`.
-It creates a script file at `services/<name>/script/script-name`, and you
+You can add a script with the following command `michi add-script --name=<name> <target>`.
+It creates a script file at `services/<name>/script/<name>`, and you
 have to code the script details.
 
 As the best practice, you should initialize a script dir at first, to do so, execute
