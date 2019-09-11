@@ -1,11 +1,12 @@
 require 'active_support/core_ext/module/delegation'
 require 'fileutils'
+require 'rugged'
 
 module Michi
   class Service
     attr_reader :name, :command
 
-    PREDEFINED_SCRIPTS = %w[add-script clone].freeze
+    PREDEFINED_SCRIPTS = %w[add-script clone clean].freeze
 
     SUPPORTED_OPTIONS = {
       add_script: %w[--basic --name]
@@ -87,8 +88,18 @@ module Michi
     def clone
       return unless repo_defined?
 
-      # TODO: Clone repo via rugged
-      repo
+      Rugged::Repository.clone_at(repo, src_path, {
+        transfer_progress: lambda { |total_objects, indexed_objects, received_objects, local_objects, total_deltas, indexed_deltas, received_bytes|
+          puts "#{self.class.name} : #{__method__} : total_objects: #{total_objects} received_objects: #{received_objects}"
+        }
+      })
+    end
+
+    def clean
+      FileUtils.rm_rf(src_path)
+      FileUtils.rm_rf(data_path)
+      FileUtils.rm_rf(cache_path)
+      FileUtils.rm_rf(log_path)
     end
   end
 end
