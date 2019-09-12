@@ -6,7 +6,7 @@ module Michi
   class Service
     attr_reader :name, :command
 
-    PREDEFINED_SCRIPTS = %w[add-script clone clean].freeze
+    PREDEFINED_SCRIPTS = %w[add-script clone clean pull].freeze
 
     SUPPORTED_OPTIONS = {
       add_script: %w[--basic --name]
@@ -88,11 +88,23 @@ module Michi
     def clone
       return unless repo_defined?
 
-      Rugged::Repository.clone_at(repo, src_path, {
-        transfer_progress: lambda { |total_objects, indexed_objects, received_objects, local_objects, total_deltas, indexed_deltas, received_bytes|
-          puts "#{self.class.name} : #{__method__} : total_objects: #{total_objects} received_objects: #{received_objects}"
-        }
-      })
+      options = []
+
+      if command.options['--depth']
+        options << "--depth #{command.options['--depth']}"
+      end
+
+      system("git clone #{repo} #{src_path} #{options.join(' ')}")
+    end
+
+    def pull
+      return unless repo_defined?
+
+      remote = command.options['--remote'].presense || 'origin'
+      branch = command.options['--branch'].presense || 'master'
+
+      Dir.chdir(src_path)
+      system("git pull #{remote} #{branch}")
     end
 
     def clean
