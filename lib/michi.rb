@@ -27,7 +27,11 @@ module Michi
     end
 
     def execute
-      services = Michi::Target.new(self).resolve
+      target = Michi::Target.new(self)
+
+      target.all_services.map(&:inject_variables)
+
+      services = target.resolve
 
       services.each do |service| # TODO: Concurrent run
         service.execute

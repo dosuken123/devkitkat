@@ -9,7 +9,7 @@ module Michi
 
     def resolve
       if all_services?
-        services.map { |key, value| Service.new(key, command) }
+        all_services
       elsif group = find_group
         services_for_group(group).map { |service| Service.new(service, command) }
       elsif service = find_service
@@ -17,6 +17,10 @@ module Michi
       else
         raise ArgumentError, "The target name #{command.target} couldn't be resolved"
       end
+    end
+
+    def all_services
+      services.map { |key, value| Service.new(key, command) }
     end
 
     private

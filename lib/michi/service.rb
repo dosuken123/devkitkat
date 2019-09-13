@@ -6,14 +6,12 @@ module Michi
   class Service
     attr_reader :name, :command
 
-    PREDEFINED_SCRIPTS = %w[add-script clone clean pull].freeze
-
     SUPPORTED_OPTIONS = {
       add_script: %w[--basic --name]
     }
 
     BASIC_SCRIPTS = %w[configure unconfigure start stop]
-    DIR_NAMES = %w[src script data cache log example dockerfile].freeze
+    DIVISIONS = %w[src script data cache log example dockerfile].freeze
     SERVICE_PROPERTIES = %w[repo host port]
 
     SCRIPT_TEMPLATE = <<-EOS
@@ -28,9 +26,9 @@ module Michi
       @name, @command = name, command
     end
 
-    DIR_NAMES.each do |dir|
-      define_method :"#{dir}_path" do
-        File.join(Dir.pwd, 'services', name, dir)
+    DIVISIONS.each do |division|
+      define_method :"#{division}_dir" do
+        File.join(service_dir, division)
       end
     end
 
@@ -44,16 +42,39 @@ module Michi
       end
     end
 
+    def service_dir
+      File.join(Dir.pwd, 'services', name)
+    end
+
     def service_config
       command.config.dig('services', name)
     end
 
     def execute
-      if PREDEFINED_SCRIPTS.include?(script)
-        method = script.tr('-', '_')
+      script_path = File.join(script_dir, script)
+      method = script.tr('-', '_')
+
+      if File.exist?(script_path)
+        inject_self_variables
+        system(script_path)
+      elsif respond_to?(method)
         send(method)
-      else
-        # TODO: Execute custom script
+      end
+    end
+
+    def inject_variables
+      ENV["MI_#{name.upcase}_DIR"] = service_dir
+
+      DIVISIONS.each do |division|
+        ENV["MI_#{name.upcase}_#{division.upcase}_DIR"] = send("#{division}_dir")
+      end
+    end
+
+    def inject_self_variables
+      ENV["MI_SELF_DIR"] = service_dir
+
+      DIVISIONS.each do |division|
+        ENV["MI_SELF_#{division.upcase}_DIR"] = send("#{division}_dir")
       end
     end
 
@@ -76,10 +97,10 @@ module Michi
                 raise ArgumentError, "#{__method__}: Name is not specified"
               end
 
-      FileUtils.mkdir_p(script_path)
+      FileUtils.mkdir_p(script_dir)
 
       names.each do |name|
-        file_path = File.join(script_path, name)
+        file_path = File.join(script_dir, name)
         File.write(file_path, SCRIPT_TEMPLATE)
         File.chmod(0777, file_path)
       end
@@ -94,7 +115,7 @@ module Michi
         options << "--depth #{command.options['--depth']}"
       end
 
-      system("git clone #{repo} #{src_path} #{options.join(' ')}")
+      system("git clone #{repo} #{src_dir} #{options.join(' ')}")
     end
 
     def pull
@@ -103,15 +124,15 @@ module Michi
       remote = command.options['--remote'].presense || 'origin'
       branch = command.options['--branch'].presense || 'master'
 
-      Dir.chdir(src_path)
+      Dir.chdir(src_dir)
       system("git pull #{remote} #{branch}")
     end
 
     def clean
-      FileUtils.rm_rf(src_path)
-      FileUtils.rm_rf(data_path)
-      FileUtils.rm_rf(cache_path)
-      FileUtils.rm_rf(log_path)
+      FileUtils.rm_rf(src_dir)
+      FileUtils.rm_rf(data_dir)
+      FileUtils.rm_rf(cache_dir)
+      FileUtils.rm_rf(log_dir)
     end
   end
 end
