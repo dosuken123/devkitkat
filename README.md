@@ -24,7 +24,8 @@ download/prepare services. These are available keys.
 |---                                         |---         |---     |---|---|
 |`version:`                                  |String      |No      |The latest version|The version of the `.michi.yml`|
 |`application:name:`                         |String      |Yes     |-|The name of the application that consists of the services|
-|`application:environment:location`          |String      |Yes     |-|The location of the environment that the services run|
+|`environment:type:`                         |String      |Yes     |-|The type of the environment. One of `local`, `docker` or `cloud`. Default is `local`.|
+|`environment:image:`                        |String      |Yes     |-|The docker image. Only effective when `type` is `docker` or `cloud`|
 |`services:`                                 |Hash        |Yes     |-|The services to run the application|
 |`services:<name>`                           |Hash        |Yes     |-|The service name e.g. `rails`, `db`, `redis`|
 |`services:<name>:repo: <value>`             |Hash        |No      |-|The git URL of the repository|
@@ -32,10 +33,6 @@ download/prepare services. These are available keys.
 |`services:<name>:environment`               |Hash        |No      |-|The environment for a service|
 |`services:<name>:environment:image: <name>` |String      |No      |-|The name of [the michi image](#michi-image)|
 |`services:<name>:variables:<key>: <value>`  |Hash        |No      |-|The key and value of the environment variable. e.g. `POSTGRES_PASSWORD: abcdef`. |
-|`global:`                                   |Hash        |No      |-|The global parameters|
-|`global:variables:<key>: <value>`           |Hash        |No      |-|The global environment variables. e.g. `POSTGRES_BIN_DIR: /usr/lib/postgresql/10/bin/`.|
-|`global:environment:`                       |Hash        |No      |-|The global [environment](#machine-image) for services|
-|`global:environment:image: <name>`          |String      |No      |-|The name of [the michi image](#michi-image)|
 |`groups:`                                   |Hash        |No      |-|The groups of the services|
 |`groups:<name>: <service-names>`            |Hash        |No      |-|The name of the group and the service names|
 
@@ -46,11 +43,9 @@ There are pre-occupied special keys, please do not use these keys in your config
 ```yaml
 application:
   name: awesome-app
-  environment:
-    location: local/docker/cloud
 
-global:
-  image: common-ruby-on-rails
+environment:
+  type: local
 
 services:
   web:
@@ -140,25 +135,22 @@ Michi provides predefined scripts that are useful in common development scenario
 
 Michi inject these predefined variables into the scripts by default.
 
-- `MI_USER_NAME` ... The LINUX user name of the executor.
-- `MI_USER_ID` ... The LINUX user id of the executor.
-- `MI_GROUP_ID` ... The LINUX group id of the executor.
-- `MI_${service}_DIR` ... The root directory path of the service.
-- `MI_${service}_SCRIPT_DIR` ... The script directory path of the service.
-- `MI_${service}_SRC_DIR` ... The source directory path of the service.
-- `MI_${service}_CACHE_DIR` ... The cache directory path of the service.
-- `MI_${service}_DATA_DIR` ... The data directory path of the service.
-- `MI_${service}_LOG_DIR` ... The log directory path of the service.
-- `MI_${service}_EXAMPLE_DIR` ... The example directory path of the service.
-- `MI_${service}_IMAGE_NAME` ... The docker image name of the service.
-- `MI_${service}_CONTAINER_NAME` ... The docker container name of the service.
-- `MI_${service}_${user_defined_variable_key}` ... The value of the user-defined variable.
-- `MI_${user_defined_global_variable_key}` ... The value of the user-defined global variable.
+- `MI_<service>_DIR` ... The root directory path of the service.
+- `MI_<service>_SCRIPT_DIR` ... The script directory path of the service.
+- `MI_<service>_SRC_DIR` ... The source directory path of the service.
+- `MI_<service>_CACHE_DIR` ... The cache directory path of the service.
+- `MI_<service>_DATA_DIR` ... The data directory path of the service.
+- `MI_<service>_LOG_DIR` ... The log directory path of the service.
+- `MI_<service>_EXAMPLE_DIR` ... The example directory path of the service.
+- `MI_<service>_<key>` ... The value of the user-defined variable.
 
 NOTE:
+ - User-defined variables are injected with the bare name. e.g. If you define
+   `VERSION: 1`, then you get the value with `echo $VERSION`. From the other services,
+   the variable can be fetched as `MI_<service>_<key>`.
  - `service` is the *uppercase* service *name*. e.g. if the service name is
   `rails`, `MI_RAILS_DIR` is the root directory path of the service.
- - `user_defined_variable_key` is *uppercase* e.g. `MI_RAILS_HOST`
+ - `key` is *uppercase* e.g. `MI_RAILS_HOST`
  - You can also use `SELF` instead of specifying a service name.
    The `SELF` indicates that it's a context specific parameter, for example,
    if you run a script for `workhorse` service, `MI_SELF_DIR` is `services/workhorse`,

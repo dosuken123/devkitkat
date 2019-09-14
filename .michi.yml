@@ -1,12 +1,14 @@
 application: awesome-app
 
+environment:
+  type: local
+
+variables:
+  POSTGRES_VERSION: 1.2.3
+
 groups:
   backend:
     - db
-
-global:
-  environment:
-    image: common-ruby-on-rails
 
 services:
   web:

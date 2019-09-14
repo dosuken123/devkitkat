@@ -20,7 +20,7 @@ module Michi
 # TODO: Define scripts
     EOS
 
-    delegate :script, to: :command
+    delegate :script, :config, to: :command
 
     def initialize(name, command)
       @name, @command = name, command
@@ -47,7 +47,7 @@ module Michi
     end
 
     def service_config
-      command.config.dig('services', name)
+      config.dig('services', name)
     end
 
     def execute
@@ -55,26 +55,34 @@ module Michi
       method = script.tr('-', '_')
 
       if File.exist?(script_path)
-        inject_self_variables
+        inject_private_variables
         system(script_path)
       elsif respond_to?(method)
         send(method)
       end
     end
 
-    def inject_variables
+    def inject_public_variables
       ENV["MI_#{name.upcase}_DIR"] = service_dir
 
       DIVISIONS.each do |division|
         ENV["MI_#{name.upcase}_#{division.upcase}_DIR"] = send("#{division}_dir")
       end
+
+      config.dig('services', name).each do |key, value|
+        ENV["MI_#{name.upcase}_#{key.upcase}"] = value.to_s
+      end
     end
 
-    def inject_self_variables
+    def inject_private_variables
       ENV["MI_SELF_DIR"] = service_dir
 
       DIVISIONS.each do |division|
         ENV["MI_SELF_#{division.upcase}_DIR"] = send("#{division}_dir")
+      end
+
+      config.dig('services', name).each do |key, value|
+        ENV[key.upcase] = value.to_s
       end
     end
 

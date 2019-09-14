@@ -29,11 +29,10 @@ module Michi
     def execute
       target = Michi::Target.new(self)
 
-      target.all_services.map(&:inject_variables)
+      inject_global_variables
+      target.all_services.map(&:inject_public_variables)
 
-      services = target.resolve
-
-      services.each do |service| # TODO: Concurrent run
+      target.resolve.each do |service| # TODO: Concurrent run
         service.execute
       end
     end
@@ -48,6 +47,23 @@ module Michi
 
     def config_path
       File.join(Dir.pwd, MICHI_FILE_NAME)
+    end
+
+    def inject_global_variables
+      config.fetch('variables', {}).each do |key, value|
+        ENV[key.upcase] = value.to_s
+      end
+
+      ENV["MI_ENVIRONMENT"] = environment.to_s
+      ENV["MI_APPLICATION"] = application.to_s
+    end
+
+    def environment
+      config.dig('environment', 'type') || 'local'
+    end
+
+    def application
+      config.fetch('application', '')
     end
   end
 end
