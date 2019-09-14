@@ -26,6 +26,34 @@ module Michi
       @name, @command = name, command
     end
 
+    def execute
+      FileUtils.rm_f(log_path)
+      FileUtils.mkdir_p(log_dir)
+
+      method = script.tr('-', '_')
+
+      if File.exist?(script_path)
+        inject_private_variables
+        process(script_path)
+      elsif respond_to?(method, true)
+        send(method)
+      end
+    end
+
+    def inject_public_variables
+      ENV["MI_#{name.upcase}_DIR"] = service_dir
+
+      DIVISIONS.each do |division|
+        ENV["MI_#{name.upcase}_#{division.upcase}_DIR"] = send("#{division}_dir")
+      end
+
+      config.dig('services', name).each do |key, value|
+        ENV["MI_#{name.upcase}_#{key.upcase}"] = value.to_s
+      end
+    end
+
+    private
+
     DIVISIONS.each do |division|
       define_method :"#{division}_dir" do
         File.join(service_dir, division)
@@ -46,6 +74,14 @@ module Michi
       File.join(Dir.pwd, 'services', name)
     end
 
+    def script_path
+      File.join(script_dir, script)
+    end
+
+    def log_path
+      File.join(log_dir, "#{script}.log")
+    end
+
     def service_config
       return {} if system?
 
@@ -54,30 +90,6 @@ module Michi
 
     def system?
       name == 'system'
-    end
-
-    def execute
-      script_path = File.join(script_dir, script)
-      method = script.tr('-', '_')
-
-      if File.exist?(script_path)
-        inject_private_variables
-        system(script_path)
-      elsif respond_to?(method)
-        send(method)
-      end
-    end
-
-    def inject_public_variables
-      ENV["MI_#{name.upcase}_DIR"] = service_dir
-
-      DIVISIONS.each do |division|
-        ENV["MI_#{name.upcase}_#{division.upcase}_DIR"] = send("#{division}_dir")
-      end
-
-      config.dig('services', name).each do |key, value|
-        ENV["MI_#{name.upcase}_#{key.upcase}"] = value.to_s
-      end
     end
 
     def inject_private_variables
@@ -120,6 +132,10 @@ module Michi
       end
     end
 
+    def process(command)
+      system("#{command} > #{log_path} 2>&1")
+    end
+
     def clone
       return unless repo_defined?
 
@@ -129,17 +145,16 @@ module Michi
         options << "--depth #{command.options['--depth']}"
       end
 
-      system("git clone #{repo} #{src_dir} #{options.join(' ')}")
+      process("git clone #{repo} #{src_dir} #{options.join(' ')}")
     end
 
     def pull
       return unless repo_defined?
 
-      remote = command.options['--remote'].presense || 'origin'
-      branch = command.options['--branch'].presense || 'master'
+      remote = command.options['--remote'] || 'origin'
+      branch = command.options['--branch'] || 'master'
 
-      Dir.chdir(src_dir)
-      system("git pull #{remote} #{branch}")
+      process("git pull #{remote} #{branch}")
     end
 
     def clean
