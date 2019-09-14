@@ -47,7 +47,13 @@ module Michi
     end
 
     def service_config
+      return {} if system?
+
       config.dig('services', name)
+    end
+
+    def system?
+      name == 'system'
     end
 
     def execute
@@ -141,6 +147,10 @@ module Michi
       FileUtils.rm_rf(data_dir)
       FileUtils.rm_rf(cache_dir)
       FileUtils.rm_rf(log_dir)
+    end
+
+    def poop
+      puts "💩"
     end
   end
 end

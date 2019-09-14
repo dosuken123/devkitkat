@@ -8,7 +8,9 @@ module Michi
     end
 
     def resolve
-      if all_services?
+      if system_target?
+        [Service.new('system', command)]
+      elsif all_services?
         all_services
       elsif group = find_group
         services_for_group(group).map { |service| Service.new(service, command) }
@@ -24,6 +26,10 @@ module Michi
     end
 
     private
+
+    def system_target?
+      command.target.nil?
+    end
 
     def all_services?
       command.target == 'all'

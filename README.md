@@ -1,6 +1,6 @@
 # Michi
 
-Michi is a framework for development kits. It's a smart helper that lets you
+Michi is a framework for development kits. It lets you
 bootstrap separate services for running a complex application easily.
 This is especially helpful for local development that runs/compiles everything from source code.
 
@@ -22,17 +22,13 @@ download/prepare services. These are available keys.
 
 |Key                                         |Type        |Required|Default|Description|
 |---                                         |---         |---     |---|---|
-|`version:`                                  |String      |No      |The latest version|The version of the `.michi.yml`|
-|`application:name:`                         |String      |Yes     |-|The name of the application that consists of the services|
+|`application:`                              |String      |Yes     |-|The name of the application that consists of the services|
 |`environment:type:`                         |String      |Yes     |-|The type of the environment. One of `local`, `docker` or `cloud`. Default is `local`.|
 |`environment:image:`                        |String      |Yes     |-|The docker image. Only effective when `type` is `docker` or `cloud`|
 |`services:`                                 |Hash        |Yes     |-|The services to run the application|
 |`services:<name>`                           |Hash        |Yes     |-|The service name e.g. `rails`, `db`, `redis`|
-|`services:<name>:repo: <value>`             |Hash        |No      |-|The git URL of the repository|
-|`services:<name>:port: <value>`             |Hash        |No      |-|The port of the service|
-|`services:<name>:environment`               |Hash        |No      |-|The environment for a service|
-|`services:<name>:environment:image: <name>` |String      |No      |-|The name of [the michi image](#michi-image)|
-|`services:<name>:variables:<key>: <value>`  |Hash        |No      |-|The key and value of the environment variable. e.g. `POSTGRES_PASSWORD: abcdef`. |
+|`services:<name>:repo: <value>`             |String      |No      |-|The git URL of the repository|
+|`services:<name>:<key>: <value>`            |Hash        |No      |-|The key and value of the environment variable. e.g. `POSTGRES_PASSWORD: abcdef`. |
 |`groups:`                                   |Hash        |No      |-|The groups of the services|
 |`groups:<name>: <service-names>`            |Hash        |No      |-|The name of the group and the service names|
 
@@ -41,8 +37,7 @@ There are pre-occupied special keys, please do not use these keys in your config
 ## Sample `.michi.yml`
 
 ```yaml
-application:
-  name: awesome-app
+application: awesome-app
 
 environment:
   type: local
