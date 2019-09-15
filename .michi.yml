@@ -8,11 +8,14 @@ variables:
 
 groups:
   backend:
-    - db
+    - web
+    - sidekiq
 
 services:
   web:
     repo: https://github.com/dosuken123/state_machine.git
     port: 1234
+  sidekiq:
+    repo: https://github.com/mperham/sidekiq.git
   db:
     port: 9999

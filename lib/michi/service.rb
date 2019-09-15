@@ -6,6 +6,8 @@ module Michi
   class Service
     attr_reader :name, :command
 
+    ScriptError = Class.new(StandardError)
+
     SUPPORTED_OPTIONS = {
       add_script: %w[--basic --name]
     }
@@ -34,7 +36,7 @@ module Michi
 
       if File.exist?(script_path)
         inject_private_variables
-        process(script_path)
+        process!(script_path)
       elsif respond_to?(method, true)
         send(method)
       end
@@ -132,8 +134,15 @@ module Michi
       end
     end
 
-    def process(command)
-      system("#{command} > #{log_path} 2>&1")
+    def process!(command)
+      system("#{command} > #{log_path} 2>&1").tap do |result|
+        raise ScriptError, process_error_message($?) unless result
+      end
+    end
+
+    def process_error_message(exit_code)
+      %Q[The command "#{script}" for "#{name}" exited with non-zero code: #{exit_code}.
+See the log file: #{log_path}]
     end
 
     def clone
@@ -145,7 +154,7 @@ module Michi
         options << "--depth #{command.options['--depth']}"
       end
 
-      process("git clone #{repo} #{src_dir} #{options.join(' ')}")
+      process!("git clone #{repo} #{src_dir} #{options.join(' ')}")
     end
 
     def pull
@@ -154,7 +163,7 @@ module Michi
       remote = command.options['--remote'] || 'origin'
       branch = command.options['--branch'] || 'master'
 
-      process("git pull #{remote} #{branch}")
+      process!("git pull #{remote} #{branch}")
     end
 
     def clean
