@@ -28,7 +28,7 @@ module Michi
       @name, @command = name, command
     end
 
-    def execute
+    def execute!
       FileUtils.rm_f(log_path)
       FileUtils.mkdir_p(log_dir)
 

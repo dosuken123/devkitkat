@@ -32,9 +32,13 @@ module Michi
       inject_global_variables
       target.all_services.map(&:inject_public_variables)
 
-      target.resolve.each do |service| # TODO: Concurrent run
-        service.execute
+      threads = target.resolve.map do |service| # TODO: Concurrent run
+        Thread.new { service.execute! }
       end
+
+      threads.each(&:join)
+    rescue => e
+      puts "Failed to execute: #{e}"
     end
 
     private
