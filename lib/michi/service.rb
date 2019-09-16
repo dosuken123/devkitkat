@@ -8,11 +8,6 @@ module Michi
 
     ScriptError = Class.new(StandardError)
 
-    SUPPORTED_OPTIONS = {
-      add_script: %w[--basic --name]
-    }
-
-    BASIC_SCRIPTS = %w[configure unconfigure start stop]
     DIVISIONS = %w[src script data cache log example dockerfile].freeze
     SERVICE_PROPERTIES = %w[repo host port]
 
@@ -106,25 +101,10 @@ module Michi
       end
     end
 
-    def validate_options!(script)
-      command.options.each do |key, value|
-        unless SUPPORTED_OPTIONS[script.to_sym].include?(key)
-          raise ArgumentError, "The option #{key} is not supported"
-        end
-      end
-    end
-
     def add_script
-      validate_options!(__method__) if command.options.any?
+      names = command.args.any? ? [command.args.first] : %w[configure unconfigure start stop]
 
-      names = if command.options.key?('--basic')
-                BASIC_SCRIPTS
-              elsif command.options.key?('--name')
-                [command.options['--name']]
-              else
-                raise ArgumentError, "#{__method__}: Name is not specified"
-              end
-
+      puts "#{self.class.name} : #{__method__} : names: #{names}"
       FileUtils.mkdir_p(script_dir)
 
       names.each do |name|
@@ -150,8 +130,8 @@ See the log file: #{log_path}]
 
       options = []
 
-      if command.options['--depth']
-        options << "--depth #{command.options['--depth']}"
+      if command.options[:git_depth]
+        options << "--depth #{command.options[:git_depth]}"
       end
 
       process!("git clone #{repo} #{src_dir} #{options.join(' ')}")
@@ -160,8 +140,8 @@ See the log file: #{log_path}]
     def pull
       return unless repo_defined?
 
-      remote = command.options['--remote'] || 'origin'
-      branch = command.options['--branch'] || 'master'
+      remote = command.options[:git_remote] || 'origin'
+      branch = command.options[:git_branch] || 'master'
 
       process!("git pull #{remote} #{branch}")
     end
