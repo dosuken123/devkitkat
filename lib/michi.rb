@@ -40,6 +40,10 @@ module Michi
         opts.on("-b", "--branch BRANCH", "Git branch") do |v|
           options[:git_branch] = v
         end
+
+        opts.on("-t", "--tty", "TTY mode. In this mode, log won't be emitted.") do |v|
+          options[:tty] = v
+        end
       end.parse!
 
       @config = load_config
@@ -60,6 +64,8 @@ module Michi
 
       services = target.resolve
 
+      raise ArgumentError, 'TTY mode accepts only one service' if options[:tty] && services.count != 1
+
       if services.count == 1
         # If the target is only one, it could be console access (TTY)
         # so we can't run in parallel.
@@ -71,7 +77,7 @@ module Michi
 
         threads.each(&:join)
       end
-    rescue => e
+    rescue ScriptError => e
       puts "Failed to execute: #{e}"
     end
 
@@ -90,10 +96,6 @@ module Michi
     def inject_global_variables
       config.fetch('variables', {}).each do |key, value|
         ENV[key] = value.to_s
-      end
-
-      options[:variables].each do |key, value|
-        ENV[key] = value
       end
 
       ENV["MI_ENVIRONMENT"] = environment.to_s

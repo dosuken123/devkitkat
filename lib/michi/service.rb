@@ -97,7 +97,7 @@ module Michi
       end
 
       config.dig('services', name).each do |key, value|
-        ENV[key.upcase] = value.to_s
+        ENV[key] = value.to_s
       end
     end
 
@@ -114,9 +114,13 @@ module Michi
       end
     end
 
-    def process!(command)
-      system("#{command} > #{log_path} 2>&1").tap do |result|
-        raise ScriptError, process_error_message($?) unless result
+    def process!(cmd_line)
+      if command.options[:tty]
+        system(cmd_line)
+      else
+        system("#{cmd_line} > #{log_path} 2>&1").tap do |result|
+          raise ScriptError, process_error_message($?) unless result
+        end
       end
     end
 
