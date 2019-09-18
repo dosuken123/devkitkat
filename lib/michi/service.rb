@@ -118,7 +118,7 @@ module Michi
       if command.options[:tty]
         system(cmd_line)
       else
-        system("#{cmd_line} > #{log_path} 2>&1").tap do |result|
+        system("#{cmd_line} >> #{log_path} 2>&1").tap do |result|
           raise ScriptError, process_error_message($?) unless result
         end
       end
@@ -155,6 +155,11 @@ See the log file: #{log_path}]
       FileUtils.rm_rf(data_dir)
       FileUtils.rm_rf(cache_dir)
       FileUtils.rm_rf(log_dir)
+    end
+
+    def reconfigure
+      process!(File.join(script_dir, 'unconfigure'))
+      process!(File.join(script_dir, 'configure'))
     end
 
     def poop
