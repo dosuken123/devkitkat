@@ -1,0 +1,7 @@
+image: ruby:2.6
+
+rspec:
+  stage: test
+  script:
+  - bin/setup
+  - bundle exec rspec
