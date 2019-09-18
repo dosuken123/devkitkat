@@ -1,3 +1,5 @@
+[![pipeline status](https://gitlab.com/dosuken123/michi/badges/master/pipeline.svg)](https://gitlab.com/dosuken123/michi/commits/master)
+
 # Michi
 
 Michi is a framework for development kits. It lets you
