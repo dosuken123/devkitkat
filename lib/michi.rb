@@ -47,7 +47,7 @@ module Michi
       end.parse!
 
       @config = load_config
-      @script, @target, *@args = ARGV
+      @target, @script, *@args = ARGV
 
       puts "config: #{@config}"
       puts "options: #{@options}"

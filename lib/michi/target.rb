@@ -48,7 +48,7 @@ module Michi
     end
 
     def find_group
-      groups.keys.find { |group| group == @command.target }
+      groups&.keys&.find { |group| group == @command.target }
     end
 
     def find_service
