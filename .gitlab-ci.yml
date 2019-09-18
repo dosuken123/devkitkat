@@ -2,6 +2,9 @@ image: ruby:2.6
 
 rspec:
   stage: test
+  before_script:
+  - apt-get update
+  - apt-get install -y cmake
   script:
   - bin/setup
   - bundle exec rspec
