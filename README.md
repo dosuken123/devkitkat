@@ -1,4 +1,4 @@
-[![pipeline status](https://gitlab.com/dosuken123/michi/badges/master/pipeline.svg)](https://gitlab.com/dosuken123/michi/commits/master)
+[![pipeline status](https://gitlab.com/dosuken123/michi-cicd/badges/master/pipeline.svg)](https://gitlab.com/dosuken123/michi-cicd/commits/master)
 
 # Michi
 
