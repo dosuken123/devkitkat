@@ -47,13 +47,13 @@ module Michi
       end.parse!
 
       @config = load_config
-      @target, @script, *@args = ARGV
+      @script, @target, *@args = ARGV
 
-      puts "config: #{@config}"
-      puts "options: #{@options}"
-      puts "script: #{@script}"
-      puts "target: #{@target}"
-      puts "args: #{@args}"
+      # puts "config: #{@config}"
+      # puts "options: #{@options}"
+      # puts "script: #{@script}"
+      # puts "target: #{@target}"
+      # puts "args: #{@args}"
     end
 
     def execute

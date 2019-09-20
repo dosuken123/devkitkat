@@ -28,7 +28,7 @@ module Michi
     private
 
     def system_target?
-      command.target.nil?
+      command.target.nil? || command.target == 'system'
     end
 
     def all_services?
