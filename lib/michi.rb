@@ -49,11 +49,11 @@ module Michi
       @config = load_config
       @script, @target, *@args = ARGV
 
-      puts "config: #{@config}"
-      puts "options: #{@options}"
-      puts "script: #{@script}"
-      puts "target: #{@target}"
-      puts "args: #{@args}"
+      # puts "config: #{@config}"
+      # puts "options: #{@options}"
+      # puts "script: #{@script}"
+      # puts "target: #{@target}"
+      # puts "args: #{@args}"
     end
 
     def execute

@@ -104,7 +104,6 @@ module Michi
     def add_script
       names = command.args.any? ? [command.args.first] : %w[configure unconfigure start stop]
 
-      puts "#{self.class.name} : #{__method__} : names: #{names}"
       FileUtils.mkdir_p(script_dir)
 
       names.each do |name|
