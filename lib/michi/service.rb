@@ -31,8 +31,10 @@ module Michi
 
       if File.exist?(script_path)
         inject_private_variables
+        process!(%Q{echo "This script is a custom script provided by you."})
         process!(script_path)
       elsif respond_to?(method, true)
+        process!(%Q{echo "This script is a predefined script provided by michi."})
         send(method)
       end
     end
@@ -96,7 +98,7 @@ module Michi
         ENV["MI_SELF_#{division.upcase}_DIR"] = send("#{division}_dir")
       end
 
-      config.dig('services', name).each do |key, value|
+      config.dig('services', name)&.each do |key, value|
         ENV[key] = value.to_s
       end
     end
@@ -108,6 +110,9 @@ module Michi
 
       names.each do |name|
         file_path = File.join(script_dir, name)
+
+        next if File.exist?(file_path)
+
         File.write(file_path, SCRIPT_TEMPLATE)
         File.chmod(0777, file_path)
       end
@@ -162,7 +167,7 @@ See the log file: #{log_path}]
     end
 
     def poop
-      puts "💩"
+      process!(%Q{echo "💩"})
     end
   end
 end

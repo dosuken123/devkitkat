@@ -47,7 +47,7 @@ module Michi
       end.parse!
 
       @config = load_config
-      @target, @script, *@args = ARGV
+      @script, @target, *@args = ARGV
 
       # puts "config: #{@config}"
       # puts "options: #{@options}"
@@ -63,6 +63,7 @@ module Michi
       target.all_services.map(&:inject_public_variables)
 
       services = target.resolve
+      services = services.reject { |service| options[:exclude]&.include?(service.name) }
 
       raise ArgumentError, 'TTY mode accepts only one service' if options[:tty] && services.count != 1
 

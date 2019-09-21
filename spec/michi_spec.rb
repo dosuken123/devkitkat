@@ -11,10 +11,10 @@ RSpec.describe Michi do
         in_tmp_dir(sample_yml) do
           execute_michi(%w[add-script rails])
 
-          expect(File.exist?('services/rails/script/configure'))
-          expect(File.exist?('services/rails/script/unconfigure'))
-          expect(File.exist?('services/rails/script/start'))
-          expect(File.exist?('services/rails/script/stop'))
+          expect(File.exist?('services/rails/script/configure')).to eq(true)
+          expect(File.exist?('services/rails/script/unconfigure')).to eq(true)
+          expect(File.exist?('services/rails/script/start')).to eq(true)
+          expect(File.exist?('services/rails/script/stop')).to eq(true)
         end
       end
 
@@ -22,7 +22,52 @@ RSpec.describe Michi do
         in_tmp_dir(sample_yml) do
           execute_michi(%w[add-script rails test])
 
-          expect(File.exist?('services/rails/script/test'))
+          expect(File.exist?('services/rails/script/test')).to eq(true)
+        end
+      end
+
+      it 'creates a script file when target is system' do
+        in_tmp_dir(sample_yml) do
+          execute_michi(%w[add-script system local-setup])
+
+          expect(File.exist?('services/system/script/local-setup')).to eq(true)
+        end
+      end
+
+      context 'when a script already exists' do
+        it 'does not overwrite the script' do
+          in_tmp_dir(sample_yml) do
+            FileUtils.mkdir_p('services/rails/script')
+            FileUtils.touch('services/rails/script/test')
+
+            execute_michi(%w[add-script rails test])
+
+            expect(File.read('services/rails/script/test')).to be_empty
+          end
+        end
+      end
+
+      context 'when targets the data group' do
+        it 'executes a script to the services in the data group' do
+          in_tmp_dir(sample_yml) do
+            execute_michi(%w[add-script data test])
+
+            expect(File.exist?('services/postgres/script/test')).to eq(true)
+            expect(File.exist?('services/redis/script/test')).to eq(true)
+            expect(File.exist?('services/rails/script/test')).to eq(false)
+          end
+        end
+
+        context 'when excludes the redis service' do
+          it 'executes a script to the services in the data group' do
+            in_tmp_dir(sample_yml) do
+              execute_michi(%w[add-script data test --exclude redis])
+  
+              expect(File.exist?('services/postgres/script/test')).to eq(true)
+              expect(File.exist?('services/redis/script/test')).to eq(false)
+              expect(File.exist?('services/rails/script/test')).to eq(false)
+            end
+          end
         end
       end
     end
@@ -36,11 +81,42 @@ RSpec.describe Michi do
         end
       end
 
+      it 'logs that a predefined script is executed' do
+        in_tmp_dir(sample_yml) do
+          execute_michi(%w[poop])
+
+          expect(File.read('services/system/log/poop.log'))
+            .to match(/This script is a predefined script provided by michi./)
+          expect(File.read('services/system/log/poop.log')).to match(/💩/)
+        end
+      end
+
       it 'poops when system is specified' do
         in_tmp_dir(sample_yml) do
           expect_any_instance_of(Michi::Service).to receive(:poop) {}
 
           execute_michi(%w[poop system])
+        end
+      end
+    end
+
+    context 'when executes a custom script' do
+      it 'logs that a custom script is executed' do
+        in_tmp_dir(sample_yml) do
+          execute_michi(%w[add-script rails test])
+          execute_michi(%w[test rails])
+
+          expect(File.read('services/rails/log/test.log'))
+            .to match(/This script is a custom script provided by you./)
+        end
+      end
+    end
+
+    context 'when targets system' do
+      it 'executes a script without specifying target' do
+        in_tmp_dir(sample_yml) do
+          execute_michi(%w[add-script system local-setup])
+          expect { execute_michi(%w[local-setup]) }.not_to raise_error
         end
       end
     end

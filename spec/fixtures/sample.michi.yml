@@ -4,10 +4,18 @@ environment:
   type: docker
   image: ruby-on-rails
 
+groups:
+  data:
+    - postgres
+    - redis
+
 services:
   rails:
     host: localhost
     port: 3000
-  db:
+  postgres:
     host: localhost
-    posrt: 5432
+    port: 5432
+  redis:
+    host: localhost
+    port: 6379

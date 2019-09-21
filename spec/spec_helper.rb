@@ -1,6 +1,7 @@
 require "bundler/setup"
 require "michi"
 require 'rspec/temp_dir'
+require 'pry'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
