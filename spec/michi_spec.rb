@@ -126,6 +126,17 @@ RSpec.describe Michi do
       end
     end
 
+    context 'when executes clone' do
+      it 'clones a repository', slow: true do
+        in_tmp_dir(sample_yml) do |dir|
+          execute_michi(%w[clone rails --depth 1])
+
+          expect(File.read('services/rails/src/.git/config'))
+            .to include("url = https://github.com/dosuken123/michi-example-rails.git")
+        end
+      end
+    end
+
     context 'when executes reconfigure' do
       context 'when export all variables' do
         let(:export_script) do
