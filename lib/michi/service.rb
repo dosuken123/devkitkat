@@ -31,8 +31,9 @@ module Michi
 
       method = script.tr('-', '_')
 
+      inject_private_variables
+
       if File.exist?(script_path)
-        inject_private_variables
         process!(%Q{echo "This script is a custom script provided by you."})
         process!(script_path)
       elsif respond_to?(method, true)

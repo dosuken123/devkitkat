@@ -20,7 +20,7 @@ def in_tmp_dir(michi_yml_path)
   Dir.mktmpdir do |dir|
     FileUtils.copy(michi_yml_path, File.join(dir, '.michi.yml'))
     Dir.chdir dir
-    yield
+    yield dir
   end
 ensure
   Dir.chdir cur_dir

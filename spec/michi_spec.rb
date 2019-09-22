@@ -100,6 +100,32 @@ RSpec.describe Michi do
       end
     end
 
+    context 'when executes reconfigure' do
+      context 'when export all variables' do
+        let(:export_script) do
+          <<-EOS
+  #!/bin/bash
+  export
+          EOS
+        end
+
+        it 'prints correct variables' do
+          in_tmp_dir(sample_yml) do |dir|
+            execute_michi(%w[add-script rails])
+            File.write('services/rails/script/configure', export_script)
+            execute_michi(%w[reconfigure rails])
+
+            expect(File.read('services/rails/log/reconfigure.log'))
+              .to include(%Q{MI_SELF_DIR="#{dir}/services/rails"})
+          end
+        end
+      end
+
+      context 'when configure/unconfigure scripts do not exist' do
+
+      end
+    end
+
     context 'when executes a custom script' do
       it 'logs that a custom script is executed' do
         in_tmp_dir(sample_yml) do
@@ -110,13 +136,33 @@ RSpec.describe Michi do
             .to match(/This script is a custom script provided by you./)
         end
       end
-    end
 
-    context 'when targets system' do
-      it 'executes a script without specifying target' do
-        in_tmp_dir(sample_yml) do
-          execute_michi(%w[add-script system local-setup])
-          expect { execute_michi(%w[local-setup]) }.not_to raise_error
+      context 'when targets system' do
+        it 'executes a script without specifying target' do
+          in_tmp_dir(sample_yml) do
+            execute_michi(%w[add-script system local-setup])
+            expect { execute_michi(%w[local-setup]) }.not_to raise_error
+          end
+        end
+      end
+
+      context 'when export all variables' do
+        let(:export_script) do
+          <<-EOS
+  #!/bin/bash
+  export
+          EOS
+        end
+
+        it 'prints correct variables' do
+          in_tmp_dir(sample_yml) do |dir|
+            execute_michi(%w[add-script rails configure])
+            File.write('services/rails/script/configure', export_script)
+            execute_michi(%w[configure rails])
+
+            expect(File.read('services/rails/log/configure.log'))
+              .to include(%Q{MI_SELF_DIR="#{dir}/services/rails"})
+          end
         end
       end
     end
