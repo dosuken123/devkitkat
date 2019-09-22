@@ -153,7 +153,7 @@ RSpec.describe Michi do
             execute_michi(%w[reconfigure rails])
 
             expect(File.read('services/rails/log/reconfigure.log'))
-              .to include(%Q{MI_SELF_DIR="#{dir}/services/rails"})
+              .to match(%r{MI_SELF_DIR=.*#{dir}/services/rails.*})
           end
         end
       end
@@ -203,7 +203,7 @@ RSpec.describe Michi do
             execute_michi(%w[configure rails])
 
             expect(File.read('services/rails/log/configure.log'))
-              .to include(%Q{MI_SELF_DIR="#{dir}/services/rails"})
+              .to match(%r{MI_SELF_DIR=.*#{dir}/services/rails.*})
           end
         end
       end
