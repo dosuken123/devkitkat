@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 RSpec.describe Michi do
   it "has a version number" do
     expect(Michi::VERSION).not_to be nil
@@ -70,6 +72,30 @@ RSpec.describe Michi do
           end
         end
       end
+
+      context 'when multiple arguments are passed' do
+        it 'adds multiple scripts' do
+          in_tmp_dir(sample_yml) do
+            execute_michi(%w[add-script rails test check])
+
+            expect(File.exist?('services/rails/script/test')).to eq(true)
+            expect(File.exist?('services/rails/script/check')).to eq(true)
+          end
+        end
+      end
+    end
+
+    context 'when executes add-example' do
+      context 'when multiple arguments are passed' do
+        it 'adds multiple scripts' do
+          in_tmp_dir(sample_yml) do
+            execute_michi(%w[add-example rails application.config.example database.config.example])
+
+            expect(File.exist?('services/rails/example/application.config.example')).to eq(true)
+            expect(File.exist?('services/rails/example/database.config.example')).to eq(true)
+          end
+        end
+      end
     end
 
     context 'when executes poop' do
@@ -122,7 +148,12 @@ RSpec.describe Michi do
       end
 
       context 'when configure/unconfigure scripts do not exist' do
-
+        it 'raises an error' do
+          in_tmp_dir(sample_yml) do |dir|
+            expect { execute_michi(%w[reconfigure rails]) }
+              .to raise_error(Michi::Service::ScriptError)
+          end
+        end
       end
     end
 

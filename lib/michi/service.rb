@@ -15,6 +15,7 @@ module Michi
 
     SCRIPT_TEMPLATE = <<-EOS
 #!/bin/bash
+set -e
 
 # TODO: Define scripts
     EOS
@@ -106,21 +107,6 @@ module Michi
       end
     end
 
-    def add_script
-      names = command.args.any? ? [command.args.first] : %w[configure unconfigure start stop]
-
-      FileUtils.mkdir_p(script_dir)
-
-      names.each do |name|
-        file_path = File.join(script_dir, name)
-
-        next if File.exist?(file_path)
-
-        File.write(file_path, SCRIPT_TEMPLATE)
-        File.chmod(0777, file_path)
-      end
-    end
-
     def process!(cmd_line)
       if command.options[:tty]
         system(cmd_line)
@@ -134,6 +120,38 @@ module Michi
     def process_error_message(exit_code)
       %Q[The command "#{script}" for "#{name}" exited with non-zero code: #{exit_code}.
 See the log file: #{log_path}]
+    end
+
+    def add_script
+      names = command.args.any? ? command.args : %w[configure unconfigure start stop]
+
+      FileUtils.mkdir_p(script_dir)
+
+      names.each do |name|
+        file_path = File.join(script_dir, name)
+
+        next if File.exist?(file_path)
+
+        File.write(file_path, SCRIPT_TEMPLATE)
+        File.chmod(0777, file_path)
+      end
+    end
+
+    def add_example
+      names = command.args
+
+      raise ArgumentError, 'Please specify at least one example name' if names.empty?
+
+      FileUtils.mkdir_p(example_dir)
+
+      names.each do |name|
+        file_path = File.join(example_dir, name)
+
+        next if File.exist?(file_path)
+
+        FileUtils.touch(file_path)
+        File.chmod(0777, file_path)
+      end
     end
 
     def clone
