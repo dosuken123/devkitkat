@@ -2,11 +2,16 @@ image: ruby:2.6
 
 rspec:
   stage: test
+  variables:
+    LANG: en_US.UTF-8
+    LANGUAGE: en_US:en
+    LC_ALL: en_US.UTF-8
   before_script:
   - apt-get update
   - apt-get install -y cmake
   - locale
   - locale -a
+  - sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && locale-gen
   script:
   - bin/setup
   - bundle exec rspec
