@@ -72,11 +72,22 @@ module Michi
         # so we can't run in parallel.
         services.first.execute!
       else
-        threads = services.map do |service|
-          Thread.new { service.execute! }
+        child_pids = services.map do |service|
+          fork do
+            Process.setsid
+            service.execute!
+          end
         end
 
-        threads.each(&:join)
+        child_pids.each { |pid| Process.waitpid(pid) }
+
+        # https://saveriomiroddi.github.io/Executing-and-killing-ruby-parallel-background-jobs/
+        # Force terminating processes
+        # child_pids.each do |pid|
+        #   pgid = Process.getpgid(pid)
+        #   Process.kill('HUP', -pgid)
+        #   Process.detach(pgid)
+        # end
       end
     rescue ScriptError => e
       puts "Failed to execute: #{e}"

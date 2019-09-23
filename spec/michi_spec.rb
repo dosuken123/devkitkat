@@ -64,7 +64,7 @@ RSpec.describe Michi do
           it 'executes a script to the services in the data group' do
             in_tmp_dir(sample_yml) do
               execute_michi(%w[add-script data test --exclude redis])
-  
+
               expect(File.exist?('services/postgres/script/test')).to eq(true)
               expect(File.exist?('services/redis/script/test')).to eq(false)
               expect(File.exist?('services/rails/script/test')).to eq(false)
@@ -154,6 +154,26 @@ RSpec.describe Michi do
 
             expect(File.read('services/rails/log/reconfigure.log'))
               .to match(%r{MI_SELF_DIR=.*#{dir}/services/rails.*})
+          end
+        end
+
+        context 'when targets group' do
+          it 'prints correct variables' do
+            in_tmp_dir(sample_yml) do |dir|
+              execute_michi(%w[add-script data])
+              File.write('services/postgres/script/configure', export_script)
+              File.write('services/redis/script/configure', export_script)
+              execute_michi(%w[reconfigure data])
+
+              expect(File.read('services/postgres/log/reconfigure.log'))
+                .to match(%r{MI_SELF_DIR=.*#{dir}/services/postgres.*})
+              expect(File.read('services/postgres/log/reconfigure.log'))
+                .to match(%r{MI_REDIS_PORT=.*6379.*})
+              expect(File.read('services/redis/log/reconfigure.log'))
+                .to match(%r{MI_SELF_DIR=.*#{dir}/services/redis.*})
+              expect(File.read('services/redis/log/reconfigure.log'))
+                .to match(%r{MI_POSTGRES_PORT=.*5432.*})
+            end
           end
         end
       end
