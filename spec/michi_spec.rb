@@ -5,6 +5,27 @@ RSpec.describe Michi do
     expect(Michi::VERSION).not_to be nil
   end
 
+  let(:long_script) do
+    <<-EOS
+#!/bin/bash
+sleep 2s
+    EOS
+  end
+
+  let(:failed_script) do
+    <<-EOS
+#!/bin/bash
+exit 1
+    EOS
+  end
+
+  let(:export_script) do
+    <<-EOS
+#!/bin/bash
+export
+    EOS
+  end
+
   context 'with sample.michi.yml' do
     let(:sample_yml) { 'spec/fixtures/sample.michi.yml' }
 
@@ -199,6 +220,23 @@ RSpec.describe Michi do
         end
       end
 
+      context 'when targets group' do
+        context 'when one of the scripts failed' do
+          it 'performs fast fail' do
+            in_tmp_dir(sample_yml) do |dir|
+              execute_michi(%w[add-script data test])
+              File.write('services/postgres/script/test', long_script)
+              File.write('services/redis/script/test', failed_script)
+              start = Time.now
+              execute_michi(%w[test data])
+              diff = Time.now - start
+
+              expect(diff).to be < 1
+            end
+          end
+        end
+      end
+
       context 'when targets system' do
         it 'executes a script without specifying target' do
           in_tmp_dir(sample_yml) do
@@ -209,13 +247,6 @@ RSpec.describe Michi do
       end
 
       context 'when export all variables' do
-        let(:export_script) do
-          <<-EOS
-  #!/bin/bash
-  export
-          EOS
-        end
-
         it 'prints correct variables' do
           in_tmp_dir(sample_yml) do |dir|
             execute_michi(%w[add-script rails configure])

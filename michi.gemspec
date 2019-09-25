@@ -30,5 +30,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry", "~> 0.12.2"
   spec.add_development_dependency "pry-nav"
   spec.add_development_dependency "activesupport", "~> 6.0.0"
-  spec.add_development_dependency "rugged", "~> 0.28.3"
+  spec.add_development_dependency "parallel", "~> 1.17.0"
+  spec.add_development_dependency "ruby-progressbar", "~> 1.10.1"
 end

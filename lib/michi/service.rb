@@ -2,7 +2,6 @@
 
 require 'active_support/core_ext/module/delegation'
 require 'fileutils'
-require 'rugged'
 
 module Michi
   class Service

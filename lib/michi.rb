@@ -3,6 +3,7 @@ require "michi/service"
 require "michi/target"
 require 'yaml'
 require 'optparse'
+require 'parallel'
 
 module Michi
   class Command
@@ -72,25 +73,15 @@ module Michi
         # so we can't run in parallel.
         services.first.execute!
       else
-        child_pids = services.map do |service|
-          fork do
-            Process.setsid
+        Parallel.map(services, progress: 'Executing') do |service|
+          begin
             service.execute!
+          rescue Michi::Service::ScriptError => e
+            puts "Failure: #{e}"
+            raise Parallel::Kill
           end
         end
-
-        child_pids.each { |pid| Process.waitpid(pid) }
-
-        # https://saveriomiroddi.github.io/Executing-and-killing-ruby-parallel-background-jobs/
-        # Force terminating processes
-        # child_pids.each do |pid|
-        #   pgid = Process.getpgid(pid)
-        #   Process.kill('HUP', -pgid)
-        #   Process.detach(pgid)
-        # end
       end
-    rescue ScriptError => e
-      puts "Failed to execute: #{e}"
     end
 
     private
