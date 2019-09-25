@@ -16,6 +16,7 @@ This tool provides the following features:
 - Respect the best practice architecture of Cloud Native.
 - Easy to run services in containers (Not available yet).
 - Distrubte machine resources to the cloud VM (Not available yet).
+- No more Makefile for orchestrating services.
 
 ## The only config file - `.michi.yml`
 

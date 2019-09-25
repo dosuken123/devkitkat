@@ -54,6 +54,10 @@ set -e
       end
     end
 
+    def log_path
+      File.join(log_dir, "#{script}.log")
+    end
+
     private
 
     DIVISIONS.each do |division|
@@ -78,10 +82,6 @@ set -e
 
     def script_path
       File.join(script_dir, script)
-    end
-
-    def log_path
-      File.join(log_dir, "#{script}.log")
     end
 
     def service_config

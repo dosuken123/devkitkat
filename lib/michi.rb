@@ -4,6 +4,8 @@ require "michi/target"
 require 'yaml'
 require 'optparse'
 require 'parallel'
+require 'colorize'
+require 'active_support/core_ext/array/conversions'
 
 module Michi
   class Command
@@ -68,6 +70,9 @@ module Michi
 
       raise ArgumentError, 'TTY mode accepts only one service' if options[:tty] && services.count != 1
 
+      log_paths = services.map(&:log_path)
+      puts "See the log at #{log_paths.to_sentence}"
+
       if services.count == 1
         # If the target is only one, it could be console access (TTY)
         # so we can't run in parallel.
@@ -77,7 +82,7 @@ module Michi
           begin
             service.execute!
           rescue Michi::Service::ScriptError => e
-            puts "Failure: #{e}"
+            puts "Failure: #{e}".colorize(:red)
             raise Parallel::Kill
           end
         end
