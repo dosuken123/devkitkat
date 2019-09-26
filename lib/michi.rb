@@ -78,7 +78,7 @@ module Michi
         # so we can't run in parallel.
         services.first.execute!
       else
-        Parallel.map(services, progress: 'Executing') do |service|
+        Parallel.map(services, progress: 'Executing', in_processes: 8) do |service|
           begin
             service.execute!
           rescue Michi::Service::ScriptError => e
