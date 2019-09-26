@@ -22,7 +22,9 @@ module Michi
     end
 
     def all_services
-      services.map { |key, value| Service.new(key, command) }
+      services.map { |key, _| Service.new(key, command) }.tap do |srvs|
+        srvs << Service.new('system', command)
+      end
     end
 
     private

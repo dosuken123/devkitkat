@@ -109,6 +109,27 @@ There is a handy command `michi add-script <name> system` and it adds a script t
 the command line e.g. `michi add-test-domain` will work instead of `michi add-test-domain system`. 
 As always, log files are stored in `services/system/log` (See more [Service structure](#service-structure))
 
+### Shared script
+
+You can create a shared script to be included in service scripts. To do so,
+execute:
+
+```
+michi add-shared-script
+```
+
+This adds `shared` script under `services/system` directory. You can define a
+shared function in the script.
+
+To include the shared script, you need to update your service script as the following:
+
+```shell
+#!/bin/bash
+source ${MI_SYSTEM_SCRIPT_SHARED_DIR}
+
+# Call a function defiend in the `shared` script
+```
+
 ## Predefined scripts
 
 Michi provides predefined scripts that are useful in common development scenarios.

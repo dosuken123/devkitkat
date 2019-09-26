@@ -26,6 +26,26 @@ export
     EOS
   end
 
+  let(:shared_script) do
+    <<-EOS
+#!/bin/bash
+
+test()
+{
+    echo "This is test"
+}
+    EOS
+  end
+
+  let(:function_script) do
+    <<-EOS
+#!/bin/bash
+source ${MI_SYSTEM_SCRIPT_SHARED_DIR}
+
+test
+    EOS
+  end
+
   context 'with sample.michi.yml' do
     let(:sample_yml) { 'spec/fixtures/sample.michi.yml' }
 
@@ -119,6 +139,19 @@ export
       end
     end
 
+    context 'when executes add-shared-script' do
+      it 'adds shared scripts' do
+        in_tmp_dir(sample_yml) do
+          execute_michi(%w[add-shared-script])
+          File.write('services/system/script/shared', shared_script)
+          execute_michi(%w[add-script rails test])
+          File.write('services/rails/script/test', function_script)
+          execute_michi(%w[test rails])
+          expect(File.read('services/rails/log/test.log')).to match(/This is test/)
+        end
+      end
+    end
+
     context 'when executes poop' do
       it 'poops when no target is specified' do
         in_tmp_dir(sample_yml) do
@@ -160,13 +193,6 @@ export
 
     context 'when executes reconfigure' do
       context 'when export all variables' do
-        let(:export_script) do
-          <<-EOS
-  #!/bin/bash
-  export
-          EOS
-        end
-
         it 'prints correct variables' do
           in_tmp_dir(sample_yml) do |dir|
             execute_michi(%w[add-script rails])

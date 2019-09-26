@@ -49,7 +49,11 @@ set -e
         ENV["MI_#{name.upcase}_#{division.upcase}_DIR"] = send("#{division}_dir")
       end
 
-      config.dig('services', name).each do |key, value|
+      if name == 'system'
+        ENV["MI_SYSTEM_SCRIPT_SHARED_DIR"] = File.join(script_dir, 'shared')
+      end
+
+      config.dig('services', name)&.each do |key, value|
         ENV["MI_#{name.upcase}_#{key.upcase}"] = value.to_s
       end
     end
@@ -151,6 +155,19 @@ See the log file: #{log_path}]
         FileUtils.touch(file_path)
         File.chmod(0777, file_path)
       end
+    end
+
+    def add_shared_script
+      raise ArgumentError, %Q{Shared script has to be added to "system"} unless name == 'system'
+
+      FileUtils.mkdir_p(script_dir)
+
+      file_path = File.join(script_dir, 'shared')
+
+      return if File.exist?(file_path)
+
+      FileUtils.touch(file_path)
+      File.chmod(0777, file_path)
     end
 
     def clone
