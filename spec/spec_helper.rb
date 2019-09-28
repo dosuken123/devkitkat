@@ -28,5 +28,5 @@ end
 
 def execute_michi(cmd)
   ARGV.replace cmd
-  Michi::Command.new.execute
+  Michi::Executor.new.execute
 end

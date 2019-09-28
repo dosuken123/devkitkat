@@ -1,0 +1,18 @@
+application: awesome-app
+
+groups:
+  data:
+    - postgres
+    - redis
+
+services:
+  rails:
+    repo: https://github.com/dosuken123/michi-example-rails.git
+    host: localhost
+    port: 3000
+  postgres:
+    host: localhost
+    port: 5432
+  redis:
+    host: localhost
+    port: 6379

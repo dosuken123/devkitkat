@@ -2,7 +2,7 @@ application: awesome-app
 
 environment:
   type: docker
-  image: ruby-on-rails
+  image: ruby:2.3
 
 groups:
   data:

@@ -5,7 +5,7 @@ require 'fileutils'
 
 module Michi
   class Service
-    attr_reader :name, :command
+    attr_reader :name, :config, :command
 
     ScriptError = Class.new(StandardError)
 
@@ -19,10 +19,10 @@ set -e
 # TODO: Define scripts
     EOS
 
-    delegate :script, :config, to: :command
+    delegate :options, :script, :args, to: :command
 
-    def initialize(name, command)
-      @name, @command = name, command
+    def initialize(name, config, command)
+      @name, @config, @command = name, config, command
     end
 
     def execute!
@@ -42,6 +42,10 @@ set -e
       end
     end
 
+    def log_path
+      File.join(log_dir, "#{script}.log")
+    end
+
     def inject_public_variables
       ENV["MI_#{name.upcase}_DIR"] = service_dir
 
@@ -49,17 +53,11 @@ set -e
         ENV["MI_#{name.upcase}_#{division.upcase}_DIR"] = send("#{division}_dir")
       end
 
-      if name == 'system'
-        ENV["MI_SYSTEM_SCRIPT_SHARED_DIR"] = File.join(script_dir, 'shared')
-      end
+      ENV["MI_#{name.upcase}_SHARED_SCRIPT_DIR"] = File.join(script_dir, 'shared')
 
-      config.dig('services', name)&.each do |key, value|
+      config.service_hash(name).each do |key, value|
         ENV["MI_#{name.upcase}_#{key.upcase}"] = value.to_s
       end
-    end
-
-    def log_path
-      File.join(log_dir, "#{script}.log")
     end
 
     private
@@ -72,11 +70,11 @@ set -e
 
     SERVICE_PROPERTIES.each do |property|
       define_method :"#{property}_defined?" do
-        service_config.key?(property)
+        config.service_hash(name).key?(property)
       end
 
       define_method :"#{property}" do
-        service_config[property]
+        config.service_hash(name)[property]
       end
     end
 
@@ -86,12 +84,6 @@ set -e
 
     def script_path
       File.join(script_dir, script)
-    end
-
-    def service_config
-      return {} if system?
-
-      config.dig('services', name)
     end
 
     def system?
@@ -105,13 +97,13 @@ set -e
         ENV["MI_SELF_#{division.upcase}_DIR"] = send("#{division}_dir")
       end
 
-      config.dig('services', name)&.each do |key, value|
+      config.service_hash(name).each do |key, value|
         ENV[key] = value.to_s
       end
     end
 
     def process!(cmd_line)
-      if command.options[:tty]
+      if command.tty?
         system(cmd_line)
       else
         system("#{cmd_line} >> #{log_path} 2>&1").tap do |result|

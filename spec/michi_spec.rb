@@ -40,14 +40,14 @@ test()
   let(:function_script) do
     <<-EOS
 #!/bin/bash
-source ${MI_SYSTEM_SCRIPT_SHARED_DIR}
+source ${MI_SYSTEM_SHARED_SCRIPT_DIR}
 
 test
     EOS
   end
 
-  context 'with sample.michi.yml' do
-    let(:sample_yml) { 'spec/fixtures/sample.michi.yml' }
+  context 'with local.michi.yml' do
+    let(:sample_yml) { 'spec/fixtures/local.michi.yml' }
 
     context 'when executes add-script' do
       it 'creates default files when no arguments' do
@@ -282,6 +282,22 @@ test
             expect(File.read('services/rails/log/configure.log'))
               .to match(%r{MI_SELF_DIR=.*#{dir}/services/rails.*})
           end
+        end
+      end
+    end
+  end
+
+  context 'with docker.michi.yml' do
+    let(:sample_yml) { 'spec/fixtures/docker.michi.yml' }
+
+    context 'when executes poop' do
+      it 'executes the script in a container' do
+        in_tmp_dir(sample_yml) do
+          execute_michi(%w[poop])
+
+          expect(File.read('services/system/log/poop.log'))
+            .to match(/This script is a predefined script provided by michi./)
+          expect(File.read('services/system/log/poop.log')).to match(/💩/)
         end
       end
     end
