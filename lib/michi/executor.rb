@@ -18,19 +18,24 @@ module Michi
       if target_services.count == 1
         # If the target is only one, it could be console access (TTY)
         # so we can't run in parallel.
-        Environment.new(config, command).in do
-          target_services.first.execute!
-        end
+        service = target_services.first
+        execute_for(service)
       else
         Parallel.map(target_services, progress: 'Executing', in_processes: 8) do |service|
-          Environment.new(config, command).in do
-            begin
-              service.execute!
-            rescue Michi::Service::ScriptError => e
-              puts "Failure: #{e}".colorize(:red)
-              raise Parallel::Kill
-            end
-          end
+          execute_for(service)
+        end
+      end
+    end
+
+    private
+
+    def execute_for(service)
+      Environment.new(config, command).in do
+        begin
+          service.execute!
+        rescue Michi::Service::ScriptError => e
+          puts "Failure: #{e}".colorize(:red)
+          raise Parallel::Kill
         end
       end
     end
