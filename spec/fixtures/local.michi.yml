@@ -5,6 +5,9 @@ groups:
     - postgres
     - redis
 
+variables:
+  RAILS_ENV: development
+
 services:
   rails:
     repo: https://github.com/dosuken123/michi-example-rails.git

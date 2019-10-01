@@ -281,6 +281,21 @@ test
 
             expect(File.read('services/rails/log/configure.log'))
               .to match(%r{MI_SELF_DIR=.*#{dir}/services/rails.*})
+            expect(File.read('services/rails/log/configure.log'))
+              .to match(%r{RAILS_ENV=.*development.*})
+          end
+        end
+
+        context 'when --env-var option is passed' do
+          it 'prints additional variables' do
+            in_tmp_dir(sample_yml) do |dir|
+              execute_michi(%w[add-script rails configure])
+              File.write('services/rails/script/configure', export_script)
+              execute_michi(%w[configure rails --env-var a_flag=true])
+
+              expect(File.read('services/rails/log/configure.log'))
+                .to match(%r{a_flag=.*true.*})
+            end
           end
         end
       end

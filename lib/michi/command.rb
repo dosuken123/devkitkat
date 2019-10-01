@@ -45,5 +45,9 @@ module Michi
     def tty?
       options[:tty]
     end
+
+    def variables
+      options[:variables]
+    end
   end
 end

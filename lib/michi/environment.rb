@@ -20,6 +20,11 @@ module Michi
         ENV[key] = value.to_s
       end
 
+      command.variables&.each do |key, value|
+        ENV[key] = value.to_s
+      end
+
+      ENV["MI_ROOT_DIR"] = Dir.pwd
       ENV["MI_ENVIRONMENT_TYPE"] = config.environment_type.to_s
       ENV["MI_APPLICATION"] = config.application.to_s
     end
