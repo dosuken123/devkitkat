@@ -13,7 +13,7 @@ module Michi
       end
 
       log_paths = target_services.map(&:log_path)
-      puts "See the log at #{log_paths.to_sentence}"
+      puts %Q{See the log at \n#{log_paths.join("\n")}}
 
       if target_services.count == 1
         # If the target is only one, it could be console access (TTY)
