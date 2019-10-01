@@ -2,6 +2,10 @@ PATH
   remote: .
   specs:
     michi (0.1.0)
+      activesupport (~> 6.0.0)
+      colorize (~> 0.8.1)
+      parallel (~> 1.17.0)
+      ruby-progressbar (~> 1.10.1)
 
 GEM
   remote: https://rubygems.org/
@@ -52,17 +56,13 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activesupport (~> 6.0.0)
   bundler (~> 1.17)
-  colorize (~> 0.8.1)
   michi!
-  parallel (~> 1.17.0)
   pry (~> 0.12.2)
   pry-nav
   rake (~> 10.0)
   rspec (~> 3.0)
   rspec-temp_dir (~> 1.1.0)
-  ruby-progressbar (~> 1.10.1)
 
 BUNDLED WITH
    1.17.3

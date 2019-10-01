@@ -191,8 +191,11 @@ See the log file: #{log_path}]
     end
 
     def reconfigure
-      process!(File.join(script_dir, 'unconfigure'))
-      process!(File.join(script_dir, 'configure'))
+      unconfigure_path = File.join(script_dir, 'unconfigure')
+      configure_path = File.join(script_dir, 'configure')
+
+      process!(unconfigure_path) if File.exist?(unconfigure_path)
+      process!(configure_path) if File.exist?(configure_path)
     end
 
     def poop

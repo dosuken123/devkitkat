@@ -229,7 +229,7 @@ test
         it 'raises an error' do
           in_tmp_dir(sample_yml) do |dir|
             expect { execute_michi(%w[reconfigure rails]) }
-              .to raise_error(Parallel::Kill)
+              .not_to raise_error
           end
         end
       end
