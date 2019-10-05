@@ -1,11 +1,10 @@
 # encoding: UTF-8
 
-require 'active_support/core_ext/module/delegation'
 require 'fileutils'
 
 module Michi
   class Service
-    attr_reader :name, :config, :command
+    attr_reader :name, :config, :command, :executor
 
     ScriptError = Class.new(StandardError)
 
@@ -26,46 +25,100 @@ set -e
     end
 
     def execute!
+      executor.prepare
+
+      inject_global_variables
+      inject_public_variables
+      inject_private_variables
+
       FileUtils.rm_f(log_path)
       FileUtils.mkdir_p(log_dir)
 
       method = script.tr('-', '_')
 
-      inject_private_variables
-
       if File.exist?(script_path)
-        process!(%Q{echo "This script is a custom script provided by you."})
-        process!(script_path)
+        executor.write(%Q{echo "This script is a custom script provided by you."})
+        executor.write(script_path)
       elsif respond_to?(method, true)
-        process!(%Q{echo "This script is a predefined script provided by michi."})
+        executor.write(%Q{echo "This script is a predefined script provided by michi."})
         send(method)
       end
+
+      executor.commit.tap do |result|
+        raise ScriptError, process_error_message($?) unless result
+      end
+    ensure
+      executor.cleanup
     end
 
     def log_path
       File.join(log_dir, "#{script}.log")
     end
 
-    def inject_public_variables
-      ENV["MI_#{name.upcase}_DIR"] = service_dir
-
-      DIVISIONS.each do |division|
-        ENV["MI_#{name.upcase}_#{division.upcase}_DIR"] = send("#{division}_dir")
-      end
-
-      ENV["MI_#{name.upcase}_SHARED_SCRIPT_DIR"] = File.join(script_dir, 'shared')
-
-      config.service_hash(name).each do |key, value|
-        ENV["MI_#{name.upcase}_#{key.upcase}"] = value.to_s
-      end
+    def container_name
+      "#{config.application}-#{name}"
     end
-
-    private
 
     DIVISIONS.each do |division|
       define_method :"#{division}_dir" do
         File.join(service_dir, division)
       end
+    end
+
+    def service_dir
+      File.join(Dir.pwd, 'services', name)
+    end
+
+    def shared_script_dir
+      File.join(script_dir, 'shared')
+    end
+
+    private
+
+    def inject_global_variables
+      config.variables.each do |key, value|
+        executor.write("export #{key}=#{value}")
+      end
+
+      command.variables&.each do |key, value|
+        executor.write("export #{key}=#{value}")
+      end
+
+      executor.write("export MI_ROOT_DIR=#{Dir.pwd}")
+      executor.write("export MI_ENVIRONMENT_TYPE=#{config.environment_type.to_s}")
+      executor.write("export MI_APPLICATION=#{config.application.to_s}")
+    end
+
+    def inject_public_variables
+      all_services.each do |service|
+        executor.write("export MI_#{service.name.upcase}_DIR=#{service.service_dir}")
+
+        DIVISIONS.each do |division|
+          executor.write("export MI_#{service.name.upcase}_#{division.upcase}_DIR=#{service.send("#{division}_dir")}")
+        end
+
+        executor.write("export MI_#{service.name.upcase}_SHARED_SCRIPT_DIR=#{service.shared_script_dir}")
+
+        config.service_hash(service.name).each do |key, value|
+          executor.write("export MI_#{service.name.upcase}_#{key.upcase}=#{value}")
+        end
+      end
+    end
+
+    def inject_private_variables
+      executor.write("export MI_SELF_DIR=#{service_dir}")
+
+      DIVISIONS.each do |division|
+        executor.write("export MI_SELF_#{division.upcase}_DIR=#{send("#{division}_dir")}")
+      end
+
+      config.service_hash(name).each do |key, value|
+        executor.write("export #{key}=#{value}")
+      end
+    end
+
+    def all_services
+      @all_services ||= config.all_services.map { |service| Service.new(service, config, command) }
     end
 
     SERVICE_PROPERTIES.each do |property|
@@ -78,38 +131,12 @@ set -e
       end
     end
 
-    def service_dir
-      File.join(Dir.pwd, 'services', name)
-    end
-
     def script_path
       File.join(script_dir, script)
     end
 
     def system?
       name == 'system'
-    end
-
-    def inject_private_variables
-      ENV["MI_SELF_DIR"] = service_dir
-
-      DIVISIONS.each do |division|
-        ENV["MI_SELF_#{division.upcase}_DIR"] = send("#{division}_dir")
-      end
-
-      config.service_hash(name).each do |key, value|
-        ENV[key] = value.to_s
-      end
-    end
-
-    def process!(cmd_line)
-      if command.tty?
-        system(cmd_line)
-      else
-        system("#{cmd_line} >> #{log_path} 2>&1").tap do |result|
-          raise ScriptError, process_error_message($?) unless result
-        end
-      end
     end
 
     def process_error_message(exit_code)
@@ -171,7 +198,7 @@ See the log file: #{log_path}]
         options << "--depth #{command.options[:git_depth]}"
       end
 
-      process!("git clone #{repo} #{src_dir} #{options.join(' ')}")
+      executor.write("git clone #{repo} #{src_dir} #{options.join(' ')}")
     end
 
     def pull
@@ -180,7 +207,7 @@ See the log file: #{log_path}]
       remote = command.options[:git_remote] || 'origin'
       branch = command.options[:git_branch] || 'master'
 
-      process!("git pull #{remote} #{branch}")
+      executor.write("git pull #{remote} #{branch}")
     end
 
     def clean
@@ -194,12 +221,16 @@ See the log file: #{log_path}]
       unconfigure_path = File.join(script_dir, 'unconfigure')
       configure_path = File.join(script_dir, 'configure')
 
-      process!(unconfigure_path) if File.exist?(unconfigure_path)
-      process!(configure_path) if File.exist?(configure_path)
+      executor.write(unconfigure_path) if File.exist?(unconfigure_path)
+      executor.write(configure_path) if File.exist?(configure_path)
     end
 
     def poop
-      process!(%Q{echo "💩"})
+      executor.write(%Q{echo "💩"})
+    end
+
+    def executor
+      @executor ||= Executor.new(self)
     end
   end
 end

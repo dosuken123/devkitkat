@@ -1,48 +1,63 @@
+require "michi/executor/docker"
+require "michi/executor/local"
+
 module Michi
   class Executor
-    attr_reader :config, :command
+    attr_reader :service, :scripts
 
-    def initialize
-      @config = Config.new
-      @command = Command.new
+    delegate :config, :command, to: :service
+    delegate :prepare, :cleanup, to: :executor
+
+    SCRIPT_HEADER = <<-EOS
+#!/bin/bash
+set -e
+    EOS
+
+    def initialize(service)
+      @service = service
+      delete_script_file
     end
 
-    def execute
-      if command.tty? && target_services.count > 1
-        raise ArgumentError, 'TTY mode accepts only one service'
-      end
+    def write(cmd)
+      ensure_script_file
 
-      log_paths = target_services.map(&:log_path)
-      puts %Q{See the log at \n#{log_paths.join("\n")}}
-
-      if target_services.count == 1
-        # If the target is only one, it could be console access (TTY)
-        # so we can't run in parallel.
-        service = target_services.first
-        execute_for(service)
-      else
-        Parallel.map(target_services, progress: 'Executing', in_processes: 8) do |service|
-          execute_for(service)
-        end
+      File.open(script_file, 'a') do |stream|
+        stream.write(cmd + "\n")
       end
+    end
+
+    def commit
+      executor.commit(script_file)
+    ensure
+      delete_script_file
     end
 
     private
 
-    def execute_for(service)
-      Environment.new(config, command).in do
-        begin
-          service.execute!
-        rescue Michi::Service::ScriptError => e
-          puts "Failure: #{e}".colorize(:red)
-          raise Parallel::Kill
-        end
-      end
+    def executor
+      @executor ||= klass.new(service)
     end
 
-    def target_services
-      @target_services ||= config.resolve!(command.target, exclude: command.options[:exclude])
-                                  .map { |service| Service.new(service, config, command) }
+    def klass
+      Object.const_get("Michi::Executor::#{config.environment_type.capitalize}")
+    end
+
+    def script_file
+      File.join(command.tmp_dir, "script-#{service.name}-#{command.script}")
+    end
+
+    def ensure_script_file
+      create_script_file unless File.exist?(script_file)
+    end
+
+    def create_script_file
+      command.create_tmp_dir
+      File.write(script_file, SCRIPT_HEADER)
+      File.chmod(0777, script_file)
+    end
+
+    def delete_script_file
+      FileUtils.rm_f(script_file)
     end
   end
 end

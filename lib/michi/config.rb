@@ -35,6 +35,10 @@ module Michi
       michi_yml.dig('environment', 'type') || 'local'
     end
 
+    def environment_image
+      michi_yml.dig('environment', 'image')
+    end
+
     def application
       michi_yml.fetch('application', '')
     end

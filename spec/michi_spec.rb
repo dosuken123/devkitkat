@@ -306,15 +306,15 @@ test
     let(:sample_yml) { 'spec/fixtures/docker.michi.yml' }
 
     context 'when executes poop' do
-      it 'executes the script in a container' do
-        in_tmp_dir(sample_yml) do
-          execute_michi(%w[poop])
+      # it 'executes the script in a container' do
+      #   in_tmp_dir(sample_yml) do
+      #     execute_michi(%w[poop])
 
-          expect(File.read('services/system/log/poop.log'))
-            .to match(/This script is a predefined script provided by michi./)
-          expect(File.read('services/system/log/poop.log')).to match(/💩/)
-        end
-      end
+      #     expect(File.read('services/system/log/poop.log'))
+      #       .to match(/This script is a predefined script provided by michi./)
+      #     expect(File.read('services/system/log/poop.log')).to match(/💩/)
+      #   end
+      # end
     end
   end
 end

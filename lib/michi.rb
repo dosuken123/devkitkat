@@ -1,8 +1,8 @@
 require "michi/version"
+require "michi/main"
 require "michi/executor"
 require "michi/command"
 require "michi/config"
-require "michi/environment"
 require "michi/service"
 require 'yaml'
 require 'optparse'
