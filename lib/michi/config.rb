@@ -3,9 +3,10 @@ module Michi
     MICHI_FILE_NAME = '.michi.yml'
     HIDDEN_SERVICES = %w[system]
 
-    attr_reader :michi_yml
+    attr_reader :michi_yml, :kit_root
 
-    def initialize
+    def initialize(kit_root)
+      @kit_root = kit_root
       @michi_yml = load_config
     end
 
@@ -80,7 +81,7 @@ module Michi
     end
 
     def config_path
-      File.join(Dir.pwd, MICHI_FILE_NAME)
+      File.join(kit_root, MICHI_FILE_NAME)
     end
   end
 end

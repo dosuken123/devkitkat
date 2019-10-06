@@ -18,11 +18,7 @@ module Michi
       end
 
       def commit(script_file)
-        if command.tty?
-          system(script_file)
-        else
-          system("#{script_file} >> #{service.log_path} 2>&1")
-        end
+        system(script_file)
       end
     end
   end

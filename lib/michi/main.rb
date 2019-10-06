@@ -3,8 +3,8 @@ module Michi
     attr_reader :config, :command
 
     def initialize
-      @config = Config.new
       @command = Command.new
+      @config = Config.new(command.kit_root)
     end
 
     def execute

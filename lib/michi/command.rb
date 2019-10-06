@@ -51,11 +51,15 @@ module Michi
     end
 
     def tmp_dir
-      File.join(Dir.pwd, 'tmp')
+      File.join(kit_root, 'tmp')
     end
 
     def create_tmp_dir
       FileUtils.mkdir_p(tmp_dir)
+    end
+
+    def kit_root
+      Dir.pwd # TODO: root_path
     end
   end
 end

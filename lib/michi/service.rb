@@ -18,7 +18,7 @@ set -e
 # TODO: Define scripts
     EOS
 
-    delegate :options, :script, :args, to: :command
+    delegate :options, :script, :args, :kit_root, to: :command
 
     def initialize(name, config, command)
       @name, @config, @command = name, config, command
@@ -30,6 +30,7 @@ set -e
       inject_global_variables
       inject_public_variables
       inject_private_variables
+      setup_logger
 
       FileUtils.rm_f(log_path)
       FileUtils.mkdir_p(log_dir)
@@ -65,8 +66,18 @@ set -e
       end
     end
 
+    SERVICE_PROPERTIES.each do |property|
+      define_method :"#{property}_defined?" do
+        config.service_hash(name).key?(property)
+      end
+
+      define_method :"#{property}" do
+        config.service_hash(name)[property]
+      end
+    end
+
     def service_dir
-      File.join(Dir.pwd, 'services', name)
+      File.join(kit_root, 'services', name)
     end
 
     def shared_script_dir
@@ -84,7 +95,7 @@ set -e
         executor.write("export #{key}=#{value}")
       end
 
-      executor.write("export MI_ROOT_DIR=#{Dir.pwd}")
+      executor.write("export MI_ROOT_DIR=#{kit_root}")
       executor.write("export MI_ENVIRONMENT_TYPE=#{config.environment_type.to_s}")
       executor.write("export MI_APPLICATION=#{config.application.to_s}")
     end
@@ -117,18 +128,14 @@ set -e
       end
     end
 
-    def all_services
-      @all_services ||= config.all_services.map { |service| Service.new(service, config, command) }
+    def setup_logger
+      return if command.tty?
+
+      executor.write("exec > #{log_path} 2>&1")
     end
 
-    SERVICE_PROPERTIES.each do |property|
-      define_method :"#{property}_defined?" do
-        config.service_hash(name).key?(property)
-      end
-
-      define_method :"#{property}" do
-        config.service_hash(name)[property]
-      end
+    def all_services
+      @all_services ||= config.all_services.map { |service| Service.new(service, config, command) }
     end
 
     def script_path
@@ -211,10 +218,10 @@ See the log file: #{log_path}]
     end
 
     def clean
-      FileUtils.rm_rf(src_dir)
-      FileUtils.rm_rf(data_dir)
-      FileUtils.rm_rf(cache_dir)
-      FileUtils.rm_rf(log_dir)
+      executor.write("rm -rf #{src_dir}")
+      executor.write("rm -rf #{data_dir}")
+      executor.write("rm -rf #{cache_dir}")
+      executor.write("rm -rf #{log_dir}")
     end
 
     def reconfigure
