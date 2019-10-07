@@ -1,4 +1,4 @@
-[![pipeline status](https://gitlab.com/dosuken123/devkitkat-cicd/badges/master/pipeline.svg)](https://gitlab.com/dosuken123/devkitkat-cicd/commits/master)
+[![pipeline status](https://gitlab.com/dosuken123/devkitkat/badges/master/pipeline.svg)](https://gitlab.com/dosuken123/devkitkat/commits/master)
 
 # Devkitkat
 
