@@ -14,7 +14,7 @@ rspec:
     LC_ALL: C.UTF-8
   before_script:
   - apt-get update
-  - apt-get install -y cmake
+  - apt-get install -y cmake docker.io
   - docker info
   script:
   - bin/setup
