@@ -1,7 +1,7 @@
-require "michi/executor/docker"
-require "michi/executor/local"
+require "devkitkat/executor/docker"
+require "devkitkat/executor/local"
 
-module Michi
+module Devkitkat
   class Executor
     attr_reader :service, :scripts
 
@@ -39,7 +39,7 @@ set -e
     end
 
     def klass
-      Object.const_get("Michi::Executor::#{config.environment_type.capitalize}")
+      Object.const_get("Devkitkat::Executor::#{config.environment_type.capitalize}")
     end
 
     def script_file

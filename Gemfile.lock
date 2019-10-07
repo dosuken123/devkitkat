@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    michi (0.1.0)
+    devkitkat (0.1.0)
       activesupport (~> 6.0.0)
       colorize (~> 0.8.1)
       docker-api (~> 1.34.2)
@@ -63,7 +63,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.17)
-  michi!
+  devkitkat!
   pry (~> 0.12.2)
   pry-nav
   rake (~> 10.0)

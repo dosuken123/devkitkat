@@ -1,8 +1,8 @@
 # encoding: UTF-8
 
-RSpec.describe Michi do
+RSpec.describe Devkitkat do
   it "has a version number" do
-    expect(Michi::VERSION).not_to be nil
+    expect(Devkitkat::VERSION).not_to be nil
   end
 
   let(:long_script) do
@@ -46,13 +46,13 @@ test
     EOS
   end
 
-  context 'with local.michi.yml' do
-    let(:sample_yml) { 'spec/fixtures/local.michi.yml' }
+  context 'with local.devkitkat.yml' do
+    let(:sample_yml) { 'spec/fixtures/local.devkitkat.yml' }
 
     context 'when executes add-script' do
       it 'creates default files when no arguments' do
         in_tmp_dir(sample_yml) do
-          execute_michi(%w[add-script rails])
+          execute_devkitkat(%w[add-script rails])
 
           expect(File.exist?('services/rails/script/configure')).to eq(true)
           expect(File.exist?('services/rails/script/unconfigure')).to eq(true)
@@ -63,7 +63,7 @@ test
 
       it 'creates a script file when an arg is passed' do
         in_tmp_dir(sample_yml) do
-          execute_michi(%w[add-script rails test])
+          execute_devkitkat(%w[add-script rails test])
 
           expect(File.exist?('services/rails/script/test')).to eq(true)
         end
@@ -71,7 +71,7 @@ test
 
       it 'creates a script file when target is system' do
         in_tmp_dir(sample_yml) do
-          execute_michi(%w[add-script system local-setup])
+          execute_devkitkat(%w[add-script system local-setup])
 
           expect(File.exist?('services/system/script/local-setup')).to eq(true)
         end
@@ -83,7 +83,7 @@ test
             FileUtils.mkdir_p('services/rails/script')
             FileUtils.touch('services/rails/script/test')
 
-            execute_michi(%w[add-script rails test])
+            execute_devkitkat(%w[add-script rails test])
 
             expect(File.read('services/rails/script/test')).to be_empty
           end
@@ -93,7 +93,7 @@ test
       context 'when targets the data group' do
         it 'executes a script to the services in the data group' do
           in_tmp_dir(sample_yml) do
-            execute_michi(%w[add-script data test])
+            execute_devkitkat(%w[add-script data test])
 
             expect(File.exist?('services/postgres/script/test')).to eq(true)
             expect(File.exist?('services/redis/script/test')).to eq(true)
@@ -104,7 +104,7 @@ test
         context 'when excludes the redis service' do
           it 'executes a script to the services in the data group' do
             in_tmp_dir(sample_yml) do
-              execute_michi(%w[add-script data test --exclude redis])
+              execute_devkitkat(%w[add-script data test --exclude redis])
 
               expect(File.exist?('services/postgres/script/test')).to eq(true)
               expect(File.exist?('services/redis/script/test')).to eq(false)
@@ -117,7 +117,7 @@ test
       context 'when multiple arguments are passed' do
         it 'adds multiple scripts' do
           in_tmp_dir(sample_yml) do
-            execute_michi(%w[add-script rails test check])
+            execute_devkitkat(%w[add-script rails test check])
 
             expect(File.exist?('services/rails/script/test')).to eq(true)
             expect(File.exist?('services/rails/script/check')).to eq(true)
@@ -130,7 +130,7 @@ test
       context 'when multiple arguments are passed' do
         it 'adds multiple scripts' do
           in_tmp_dir(sample_yml) do
-            execute_michi(%w[add-example rails application.config.example database.config.example])
+            execute_devkitkat(%w[add-example rails application.config.example database.config.example])
 
             expect(File.exist?('services/rails/example/application.config.example')).to eq(true)
             expect(File.exist?('services/rails/example/database.config.example')).to eq(true)
@@ -142,11 +142,11 @@ test
     context 'when executes add-shared-script' do
       it 'adds shared scripts' do
         in_tmp_dir(sample_yml) do
-          execute_michi(%w[add-shared-script])
+          execute_devkitkat(%w[add-shared-script])
           File.write('services/system/script/shared', shared_script)
-          execute_michi(%w[add-script rails test])
+          execute_devkitkat(%w[add-script rails test])
           File.write('services/rails/script/test', function_script)
-          execute_michi(%w[test rails])
+          execute_devkitkat(%w[test rails])
           expect(File.read('services/rails/log/test.log')).to match(/This is test/)
         end
       end
@@ -155,27 +155,27 @@ test
     context 'when executes poop' do
       it 'poops when no target is specified' do
         in_tmp_dir(sample_yml) do
-          expect_any_instance_of(Michi::Service).to receive(:poop) {}
+          expect_any_instance_of(Devkitkat::Service).to receive(:poop) {}
 
-          execute_michi(%w[poop])
+          execute_devkitkat(%w[poop])
         end
       end
 
       it 'logs that a predefined script is executed' do
         in_tmp_dir(sample_yml) do
-          execute_michi(%w[poop])
+          execute_devkitkat(%w[poop])
 
           expect(File.read('services/system/log/poop.log'))
-            .to match(/This script is a predefined script provided by michi./)
+            .to match(/This script is a predefined script provided by devkitkat./)
           expect(File.read('services/system/log/poop.log')).to match(/💩/)
         end
       end
 
       it 'poops when system is specified' do
         in_tmp_dir(sample_yml) do
-          expect_any_instance_of(Michi::Service).to receive(:poop) {}
+          expect_any_instance_of(Devkitkat::Service).to receive(:poop) {}
 
-          execute_michi(%w[poop system])
+          execute_devkitkat(%w[poop system])
         end
       end
     end
@@ -183,10 +183,10 @@ test
     context 'when executes clone' do
       it 'clones a repository', slow: true do
         in_tmp_dir(sample_yml) do |dir|
-          execute_michi(%w[clone rails --depth 1])
+          execute_devkitkat(%w[clone rails --depth 1])
 
           expect(File.read('services/rails/src/.git/config'))
-            .to include("url = https://github.com/dosuken123/michi-example-rails.git")
+            .to include("url = https://github.com/dosuken123/devkitkat-example-rails.git")
         end
       end
     end
@@ -195,9 +195,9 @@ test
       context 'when export all variables' do
         it 'prints correct variables' do
           in_tmp_dir(sample_yml) do |dir|
-            execute_michi(%w[add-script rails])
+            execute_devkitkat(%w[add-script rails])
             File.write('services/rails/script/configure', export_script)
-            execute_michi(%w[reconfigure rails])
+            execute_devkitkat(%w[reconfigure rails])
 
             expect(File.read('services/rails/log/reconfigure.log'))
               .to match(%r{MI_SELF_DIR=.*#{dir}/services/rails.*})
@@ -207,10 +207,10 @@ test
         context 'when targets group' do
           it 'prints correct variables' do
             in_tmp_dir(sample_yml) do |dir|
-              execute_michi(%w[add-script data])
+              execute_devkitkat(%w[add-script data])
               File.write('services/postgres/script/configure', export_script)
               File.write('services/redis/script/configure', export_script)
-              execute_michi(%w[reconfigure data])
+              execute_devkitkat(%w[reconfigure data])
 
               expect(File.read('services/postgres/log/reconfigure.log'))
                 .to match(%r{MI_SELF_DIR=.*#{dir}/services/postgres.*})
@@ -228,7 +228,7 @@ test
       context 'when configure/unconfigure scripts do not exist' do
         it 'raises an error' do
           in_tmp_dir(sample_yml) do |dir|
-            expect { execute_michi(%w[reconfigure rails]) }
+            expect { execute_devkitkat(%w[reconfigure rails]) }
               .not_to raise_error
           end
         end
@@ -238,8 +238,8 @@ test
     context 'when executes a custom script' do
       it 'logs that a custom script is executed' do
         in_tmp_dir(sample_yml) do
-          execute_michi(%w[add-script rails test])
-          execute_michi(%w[test rails])
+          execute_devkitkat(%w[add-script rails test])
+          execute_devkitkat(%w[test rails])
 
           expect(File.read('services/rails/log/test.log'))
             .to match(/This script is a custom script provided by you./)
@@ -250,11 +250,11 @@ test
         context 'when one of the scripts failed' do
           it 'performs fast fail' do
             in_tmp_dir(sample_yml) do |dir|
-              execute_michi(%w[add-script data test])
+              execute_devkitkat(%w[add-script data test])
               File.write('services/postgres/script/test', long_script)
               File.write('services/redis/script/test', failed_script)
               start = Time.now
-              execute_michi(%w[test data])
+              execute_devkitkat(%w[test data])
               diff = Time.now - start
 
               expect(diff).to be < 1
@@ -266,8 +266,8 @@ test
       context 'when targets system' do
         it 'executes a script without specifying target' do
           in_tmp_dir(sample_yml) do
-            execute_michi(%w[add-script system local-setup])
-            expect { execute_michi(%w[local-setup]) }.not_to raise_error
+            execute_devkitkat(%w[add-script system local-setup])
+            expect { execute_devkitkat(%w[local-setup]) }.not_to raise_error
           end
         end
       end
@@ -275,9 +275,9 @@ test
       context 'when export all variables' do
         it 'prints correct variables' do
           in_tmp_dir(sample_yml) do |dir|
-            execute_michi(%w[add-script rails configure])
+            execute_devkitkat(%w[add-script rails configure])
             File.write('services/rails/script/configure', export_script)
-            execute_michi(%w[configure rails])
+            execute_devkitkat(%w[configure rails])
 
             expect(File.read('services/rails/log/configure.log'))
               .to match(%r{MI_SELF_DIR=.*#{dir}/services/rails.*})
@@ -289,9 +289,9 @@ test
         context 'when --env-var option is passed' do
           it 'prints additional variables' do
             in_tmp_dir(sample_yml) do |dir|
-              execute_michi(%w[add-script rails configure])
+              execute_devkitkat(%w[add-script rails configure])
               File.write('services/rails/script/configure', export_script)
-              execute_michi(%w[configure rails --env-var a_flag=true])
+              execute_devkitkat(%w[configure rails --env-var a_flag=true])
 
               expect(File.read('services/rails/log/configure.log'))
                 .to match(%r{a_flag=.*true.*})
@@ -302,16 +302,16 @@ test
     end
   end
 
-  context 'with docker.michi.yml' do
-    let(:sample_yml) { 'spec/fixtures/docker.michi.yml' }
+  context 'with docker.devkitkat.yml' do
+    let(:sample_yml) { 'spec/fixtures/docker.devkitkat.yml' }
 
     context 'when executes poop' do
       it 'executes the script in a container' do
         in_tmp_dir(sample_yml) do
-          execute_michi(%w[poop])
+          execute_devkitkat(%w[poop])
 
           expect(File.read('services/system/log/poop.log'))
-            .to match(/This script is a predefined script provided by michi./)
+            .to match(/This script is a predefined script provided by devkitkat./)
           expect(File.read('services/system/log/poop.log')).to match(/💩/)
         end
       end

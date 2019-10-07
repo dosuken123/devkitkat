@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "michi"
+require "devkitkat"
 require 'rspec/temp_dir'
 require 'pry'
 
@@ -15,10 +15,10 @@ RSpec.configure do |config|
   end
 end
 
-def in_tmp_dir(michi_yml_path)
+def in_tmp_dir(devkitkat_yml_path)
   cur_dir = Dir.pwd
   Dir.mktmpdir do |dir|
-    FileUtils.copy(michi_yml_path, File.join(dir, '.michi.yml'))
+    FileUtils.copy(devkitkat_yml_path, File.join(dir, '.devkitkat.yml'))
     Dir.chdir dir
     yield dir
   end
@@ -26,7 +26,7 @@ ensure
   Dir.chdir cur_dir
 end
 
-def execute_michi(cmd)
+def execute_devkitkat(cmd)
   ARGV.replace cmd
-  Michi::Main.new.execute
+  Devkitkat::Main.new.execute
 end

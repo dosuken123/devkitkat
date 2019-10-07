@@ -1,16 +1,17 @@
 application: awesome-app
 
+environment:
+  type: docker
+  image: ruby:2.6
+
 groups:
   data:
     - postgres
     - redis
 
-variables:
-  RAILS_ENV: development
-
 services:
   rails:
-    repo: https://github.com/dosuken123/michi-example-rails.git
+    repo: https://github.com/dosuken123/devkitkat-example-rails.git
     host: localhost
     port: 3000
   postgres:

@@ -1,17 +1,17 @@
 
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "michi/version"
+require "devkitkat/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "michi"
-  spec.version       = Michi::VERSION
+  spec.name          = "devkitkat"
+  spec.version       = Devkitkat::VERSION
   spec.authors       = ["Shinya Maeda"]
   spec.email         = ["shinya@gitlab.com"]
 
   spec.summary       = "Make micro services easy"
   spec.description   = "Make micro services easy"
-  spec.homepage      = "https://gitlab.com/dosuken123/michi"
+  spec.homepage      = "https://gitlab.com/dosuken123/devkitkat"
   spec.license       = "MIT"
 
   # Specify which files should be added to the gem when it is released.
@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
     `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   end
   spec.bindir        = "bin"
-  spec.executables   = "michi"
+  spec.executables   = "devkitkat"
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler", "~> 1.17"

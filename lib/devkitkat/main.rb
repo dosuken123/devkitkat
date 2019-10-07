@@ -1,4 +1,4 @@
-module Michi
+module Devkitkat
   class Main
     attr_reader :config, :command
 
@@ -32,7 +32,7 @@ module Michi
     def execute_for(service)
       begin
         service.execute!
-      rescue Michi::Service::ScriptError => e
+      rescue Devkitkat::Service::ScriptError => e
         puts "Failure: #{e}".colorize(:red)
         raise Parallel::Kill
       end

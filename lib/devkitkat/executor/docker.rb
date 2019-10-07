@@ -1,7 +1,7 @@
 require 'active_support/core_ext/module/delegation'
 require 'docker'
 
-module Michi
+module Devkitkat
   class Executor
     class Docker
       attr_reader :service, :script_file
@@ -81,7 +81,7 @@ module Michi
       end
 
       def root_in_container
-        "/michi"
+        "/devkitkat"
       end
 
       def start_container

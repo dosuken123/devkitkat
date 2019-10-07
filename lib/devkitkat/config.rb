@@ -1,13 +1,13 @@
-module Michi
+module Devkitkat
   class Config
-    MICHI_FILE_NAME = '.michi.yml'
+    DEVKITKAT_FILE_NAME = '.devkitkat.yml'
     HIDDEN_SERVICES = %w[system]
 
-    attr_reader :michi_yml, :kit_root
+    attr_reader :devkitkat_yml, :kit_root
 
     def initialize(kit_root)
       @kit_root = kit_root
-      @michi_yml = load_config
+      @devkitkat_yml = load_config
     end
 
     def all_services
@@ -33,37 +33,37 @@ module Michi
     end
 
     def environment_type
-      michi_yml.dig('environment', 'type') || 'local'
+      devkitkat_yml.dig('environment', 'type') || 'local'
     end
 
     def environment_image
-      michi_yml.dig('environment', 'image')
+      devkitkat_yml.dig('environment', 'image')
     end
 
     def application
-      michi_yml.fetch('application', '')
+      devkitkat_yml.fetch('application', '')
     end
 
     def variables
-      michi_yml.fetch('variables', {})
+      devkitkat_yml.fetch('variables', {})
     end
 
     def service_hash(name)
-      michi_yml.dig('services', name) || {}
+      devkitkat_yml.dig('services', name) || {}
     end
 
     private
 
     def services
-      michi_yml['services']&.keys || []
+      devkitkat_yml['services']&.keys || []
     end
 
     def groups
-      michi_yml['groups']&.keys || []
+      devkitkat_yml['groups']&.keys || []
     end
 
     def services_for_group(group)
-      michi_yml.dig('groups', group) || []
+      devkitkat_yml.dig('groups', group) || []
     end
 
     def find_group(target)
@@ -81,7 +81,7 @@ module Michi
     end
 
     def config_path
-      File.join(kit_root, MICHI_FILE_NAME)
+      File.join(kit_root, DEVKITKAT_FILE_NAME)
     end
   end
 end

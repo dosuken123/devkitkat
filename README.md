@@ -1,8 +1,8 @@
-[![pipeline status](https://gitlab.com/dosuken123/michi-cicd/badges/master/pipeline.svg)](https://gitlab.com/dosuken123/michi-cicd/commits/master)
+[![pipeline status](https://gitlab.com/dosuken123/devkitkat-cicd/badges/master/pipeline.svg)](https://gitlab.com/dosuken123/devkitkat-cicd/commits/master)
 
-# Michi
+# Devkitkat
 
-Michi is a framework for development kits. It lets you
+Devkitkat is a framework for development kits. It lets you
 bootstrap separate services for running a complex application easily.
 This is especially helpful for local development that runs/compiles everything from source code.
 
@@ -18,9 +18,9 @@ This tool provides the following features:
 - Distrubte machine resources to the cloud VM (Not available yet).
 - No more Makefile for orchestrating services.
 
-## The only config file - `.michi.yml`
+## The only config file - `.devkitkat.yml`
 
-The only config file `.michi.yml` has to be placed at the root directory where you want to
+The only config file `.devkitkat.yml` has to be placed at the root directory where you want to
 download/prepare services. These are available keys.
 
 |Key                                         |Type        |Required|Default|Description|
@@ -37,7 +37,7 @@ download/prepare services. These are available keys.
 
 There are pre-occupied special keys, please do not use these keys in your config file: `services:system`, `services:self`
 
-## Sample `.michi.yml`
+## Sample `.devkitkat.yml`
 
 ```yaml
 application: awesome-app
@@ -53,19 +53,19 @@ services:
     port: 9999
 ```
 
-## Michi image
+## Devkitkat image
 
 When you run your application with docker containers, you might need to write up
 [Dockerfile](https://docs.docker.com/engine/reference/builder/) and build the image at first,
 this often is time consuming and repeatable task.
-To avoid this cumbersome step, michi provides some useful pre-built machines, which
+To avoid this cumbersome step, devkitkat provides some useful pre-built machines, which
 works with your application on the fly.
-These images are defined in michi as a ruby script and easy to customize/extend.
+These images are defined in devkitkat as a ruby script and easy to customize/extend.
 If you don't find useful machines, you can still define it in `services/<name>/dockerfile` directory,
 however, please consider contributing to this repository for the other people who
 would be stuck into the same pitfall/situation.
 
-- `Michi::Environment::Image::CommonRubyOnRails`
+- `Devkitkat::Environment::Image::CommonRubyOnRails`
   - `author`
   - `homepage`
   - etc
@@ -89,24 +89,24 @@ Each service is stored in the following directories:
 Since your service's startup command could vary per your application preference,
 you have to define start/stop/configure/etc scripts manually.
 
-You can add a script with the following command `michi add-script --name=<name> <target>`.
+You can add a script with the following command `devkitkat add-script --name=<name> <target>`.
 It creates a script file at `services/<name>/script/<name>`, and you
 have to code the script details.
 
 As the best practice, you should initialize a script dir at first, to do so, execute
-`michi add-script --basic <target>`. It adds the following basic scripts that you'd need
+`devkitkat add-script --basic <target>`. It adds the following basic scripts that you'd need
 
 - configure/unconfigure ... Configure/Unconfigure the service (Typically, initializes the config file, etc)
 - start/stop ... Start/Stop the service
 
-So you might want to execute `michi add-script --basic all` after you've prepared
-.michi.yml. After you write up the commands, you can execute scripts with a command
-like `michi rails configutre` or `michi php start`.
+So you might want to execute `devkitkat add-script --basic all` after you've prepared
+.devkitkat.yml. After you write up the commands, you can execute scripts with a command
+like `devkitkat rails configutre` or `devkitkat php start`.
 
 You can also define system scripts that does not belong to a specific service.
-There is a handy command `michi add-script <name> system` and it adds a script to `services/system/script` dir.
+There is a handy command `devkitkat add-script <name> system` and it adds a script to `services/system/script` dir.
 . For the system script execution, you can ommit `<target>` from
-the command line e.g. `michi add-test-domain` will work instead of `michi add-test-domain system`. 
+the command line e.g. `devkitkat add-test-domain` will work instead of `devkitkat add-test-domain system`. 
 As always, log files are stored in `services/system/log` (See more [Service structure](#service-structure))
 
 ### Shared script
@@ -115,7 +115,7 @@ You can create a shared script to be included in service scripts. To do so,
 execute:
 
 ```
-michi add-shared-script
+devkitkat add-shared-script
 ```
 
 This adds `shared` script under `services/system` directory. You can define a
@@ -132,7 +132,7 @@ source ${MI_SYSTEM_SCRIPT_SHARED_DIR}
 
 ## Predefined scripts
 
-Michi provides predefined scripts that are useful in common development scenarios.
+Devkitkat provides predefined scripts that are useful in common development scenarios.
 
 |Script name    |Available options        |Description|
 |---            |---                      |---|
@@ -148,11 +148,11 @@ Michi provides predefined scripts that are useful in common development scenario
 
 ## Predefined group names
 
-- `all` ... All defined services in `.michi.yml`
+- `all` ... All defined services in `.devkitkat.yml`
 
 ## Predefined variables
 
-Michi inject these predefined variables into the scripts by default.
+Devkitkat inject these predefined variables into the scripts by default.
 
 - `MI_<service>_DIR` ... The root directory path of the service.
 - `MI_<service>_SCRIPT_DIR` ... The script directory path of the service.
@@ -179,47 +179,47 @@ NOTE:
 
 Basically, command execution follows the below convention.
 
-`michi <script-name> <target - service name or group name>`
+`devkitkat <script-name> <target - service name or group name>`
 
 For example, if you want to start `rails` service, your command would look like
 
-`michi start rails`
+`devkitkat start rails`
 
 , Or, if you want to start all services belong to the `backend` group,
 
-`michi start backend`
+`devkitkat start backend`
 
 , Or, if you want to pass multiple services, use comma separated service names,
 
-`michi start rails,postgres,redis`
+`devkitkat start rails,postgres,redis`
 
 , Or, if you want to exclude a specific service from a group, use `--exclude` option,
 
-`michi start backend --exclude redis`
+`devkitkat start backend --exclude redis`
 
 ## Sample commands
 
 ```
-michi pull default                          # Pull source code for the default group
-michi configure default                     # It configures source code for the default group
-michi start postgresql,redis,gitaly         # It starts `postgresql`, `redis` and `gitaly` services.
-michi seed rails                            # It Seeds for `rails` service
-michi start default                         # It starts services of the `default` group
+devkitkat pull default                          # Pull source code for the default group
+devkitkat configure default                     # It configures source code for the default group
+devkitkat start postgresql,redis,gitaly         # It starts `postgresql`, `redis` and `gitaly` services.
+devkitkat seed rails                            # It Seeds for `rails` service
+devkitkat start default                         # It starts services of the `default` group
 ```
 
-## Options for `michi`
+## Options for `devkitkat`
 
-- `--path /path/to/the` ... The root directory that contains `.michi.yml` and manage the service dirs.
+- `--path /path/to/the` ... The root directory that contains `.devkitkat.yml` and manage the service dirs.
 - `--variables KEY=VAR` ... The additional environment variables for services.
 - `--exclude <name>` ... The excluded service from the group.
 
 Example:
 
-`michi start rails --path $HOME/awesome-app-dev-kit/ --variables AWS_CRED=XXXXX`
+`devkitkat start rails --path $HOME/awesome-app-dev-kit/ --variables AWS_CRED=XXXXX`
 
 ## Installation
 
-    $ gem install michi
+    $ gem install devkitkat
 
 ## Development
 
@@ -231,15 +231,15 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 **Execute only fast tests**
 
-`bundle exec rspec /home/shinya/workspace/michi/spec/michi_spec.rb -t ~slow`
+`bundle exec rspec /home/shinya/workspace/devkitkat/spec/devkitkat_spec.rb -t ~slow`
 
 **Execute only slow tests**
 
-`bundle exec rspec /home/shinya/workspace/michi/spec/michi_spec.rb -t slow`
+`bundle exec rspec /home/shinya/workspace/devkitkat/spec/devkitkat_spec.rb -t slow`
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitLab at https://gitlab.com/dosuken123/michi. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitLab at https://gitlab.com/dosuken123/devkitkat. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
@@ -247,4 +247,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the Michi project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/michi/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the Devkitkat project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/devkitkat/blob/master/CODE_OF_CONDUCT.md).

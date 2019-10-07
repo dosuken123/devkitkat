@@ -1,4 +1,4 @@
-module Michi
+module Devkitkat
   class Executor
     class Local
       attr_reader :service

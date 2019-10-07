@@ -1,4 +1,4 @@
-module Michi
+module Devkitkat
   class Command
     attr_reader :options, :script, :target, :args
 
@@ -6,9 +6,9 @@ module Michi
       @options = {}
 
       OptionParser.new do |opts|
-        opts.banner = "Usage: michi <script> <target> [options]"
+        opts.banner = "Usage: devkitkat <script> <target> [options]"
 
-        opts.on("-p", "--path PATH", "The root path of the .michi.yml") do |v|
+        opts.on("-p", "--path PATH", "The root path of the .devkitkat.yml") do |v|
           options[:root_path] = v
         end
 
