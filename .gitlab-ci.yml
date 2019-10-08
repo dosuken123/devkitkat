@@ -12,12 +12,14 @@ rspec:
   variables:
     LANG: C.UTF-8
     LC_ALL: C.UTF-8
-    CI_BUILDS_DIR: /builds/$CI_PROJECT_PATH/dosuken-test
   before_script:
   - apt-get update
   - apt-get install -y cmake docker.io
   - docker info
   - pwd
   script:
+  - mkdir ../test
+  - cp -R * ../test
+  - cd ../test
   - bin/setup
   - bundle exec rspec
