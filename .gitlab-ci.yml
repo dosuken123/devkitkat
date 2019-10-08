@@ -19,7 +19,7 @@ rspec:
   - pwd
   script:
   - mkdir ../test
-  - cp -R * ../test
+  - cp -a . ../test
   - cd ../test
   - bin/setup
   - bundle exec rspec
