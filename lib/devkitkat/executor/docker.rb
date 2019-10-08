@@ -13,6 +13,7 @@ module Devkitkat
       end
 
       def prepare
+        pull_image
         start_container
       end
 
@@ -82,6 +83,10 @@ module Devkitkat
 
       def root_in_container
         "/devkitkat"
+      end
+
+      def pull_image
+        ::Docker::Image.create('fromImage' => docker_image)
       end
 
       def start_container
