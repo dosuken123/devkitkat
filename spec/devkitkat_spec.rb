@@ -57,7 +57,6 @@ test
           expect(File.exist?('services/rails/script/configure')).to eq(true)
           expect(File.exist?('services/rails/script/unconfigure')).to eq(true)
           expect(File.exist?('services/rails/script/start')).to eq(true)
-          expect(File.exist?('services/rails/script/stop')).to eq(true)
         end
       end
 
@@ -280,6 +279,8 @@ test
             execute_devkitkat(%w[configure rails])
 
             expect(File.read('services/rails/log/configure.log'))
+              .to match(%r{MI_APPLICATION=.*devkitkat.*})
+            expect(File.read('services/rails/log/configure.log'))
               .to match(%r{MI_SELF_DIR=.*#{dir}/services/rails.*})
             expect(File.read('services/rails/log/configure.log'))
               .to match(%r{RAILS_ENV=.*development.*})
@@ -306,7 +307,7 @@ test
     let(:sample_yml) { 'spec/fixtures/docker.devkitkat.yml' }
 
     context 'when executes poop' do
-      it 'executes the script in a container' do
+      it 'executes the script in a container', slow: true do
         in_tmp_dir(sample_yml) do
           execute_devkitkat(%w[poop])
 

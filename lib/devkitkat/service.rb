@@ -152,7 +152,7 @@ See the log file: #{log_path}]
     end
 
     def add_script
-      names = command.args.any? ? command.args : %w[configure unconfigure start stop]
+      names = command.args.any? ? command.args : %w[configure unconfigure start]
 
       FileUtils.mkdir_p(script_dir)
 

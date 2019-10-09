@@ -49,7 +49,7 @@ module Devkitkat
       end
 
       def docker_image
-        config.environment_image
+        config.image
       end
   
       def container

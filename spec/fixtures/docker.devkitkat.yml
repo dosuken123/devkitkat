@@ -1,8 +1,4 @@
-application: awesome-app
-
-environment:
-  type: docker
-  image: ruby:2.6
+image: ubuntu:18.04
 
 groups:
   data:

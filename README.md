@@ -30,25 +30,32 @@ download/prepare services. These are available keys.
 
 |Key                                         |Type        |Required|Default|Description|
 |---                                         |---         |---     |---|---|
-|`application:`                              |String      |Yes     |-|The name of the application that consists of the services|
-|`environment:type:`                         |String      |Yes     |-|The type of the environment. One of `local`, `docker` or `cloud`. Default is `local`.|
-|`environment:image:`                        |String      |Yes     |-|The docker image. Only effective when `type` is `docker` or `cloud`|
 |`services:`                                 |Hash        |Yes     |-|The services to run the application|
 |`services:<name>`                           |Hash        |Yes     |-|The service name e.g. `rails`, `db`, `redis`|
 |`services:<name>:repo: <value>`             |String      |No      |-|The git URL of the repository|
 |`services:<name>:<key>: <value>`            |Hash        |No      |-|The key and value of the environment variable. e.g. `POSTGRES_PASSWORD: abcdef`. |
+|`image:`                                    |String      |No      |-|The docker image. Only effective when `type` is `docker` or `cloud`|
 |`groups:`                                   |Hash        |No      |-|The groups of the services|
 |`groups:<name>: <service-names>`            |Hash        |No      |-|The name of the group and the service names|
+|`application:`                              |String      |No      |-|The name of the application that consists of the services|
 
 There are pre-occupied special keys, please do not use these keys in your config file: `services:system`, `services:self`
 
-## Sample `.devkitkat.yml`
+## Sample `.devkitkat.yml` that runs services in local environment
 
 ```yaml
-application: awesome-app
+services:
+  web:
+    repo: https://gitlab.com/gitlab-org/gitlab-ce.git
+    port: 1234
+  db:
+    port: 9999
+```
 
-environment:
-  type: local
+## Sample `.devkitkat.yml` that runs services in docker containers
+
+```yaml
+image: ruby:2.6
 
 services:
   web:

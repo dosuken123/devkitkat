@@ -1,5 +1,3 @@
-application: awesome-app
-
 groups:
   data:
     - postgres

@@ -2,6 +2,8 @@ module Devkitkat
   class Config
     DEVKITKAT_FILE_NAME = '.devkitkat.yml'
     HIDDEN_SERVICES = %w[system]
+    DEFAULT_APPLICATION_NAME = 'devkitkat'
+    DEFAULT_IMAGE = 'ubuntu:18.04'
 
     attr_reader :devkitkat_yml, :kit_root
 
@@ -33,15 +35,19 @@ module Devkitkat
     end
 
     def environment_type
-      devkitkat_yml.dig('environment', 'type') || 'local'
+      if devkitkat_yml.key?('image')
+        'docker'
+      else
+        'local'
+      end
     end
 
-    def environment_image
-      devkitkat_yml.dig('environment', 'image')
+    def image
+      devkitkat_yml.fetch('image', DEFAULT_IMAGE)
     end
 
     def application
-      devkitkat_yml.fetch('application', '')
+      devkitkat_yml.fetch('application', DEFAULT_APPLICATION_NAME)
     end
 
     def variables
