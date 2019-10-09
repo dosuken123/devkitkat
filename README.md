@@ -6,17 +6,22 @@ Devkitkat is a framework for development kits. It lets you
 bootstrap separate services for running a complex application easily.
 This is especially helpful for local development that runs/compiles everything from source code.
 
+## Key concepts
+
+- It's an alternative solution of docker-compose.
+- Convention over configuration. No need to write up complicated config file from scratch.
+- Respect the best practice architecture of Cloud Native.
+- No more Makefile for orchestrating services.
+
 ## Features
 
 This tool provides the following features:
 
-- Easy configuration, easiser than docker-compose.
-- Customizable/Flexible scripts for controlling services.
-- Logging command output dy default.
-- Respect the best practice architecture of Cloud Native.
-- Easy to run services in containers (Not available yet).
+- You can control services with a handy command.
+- You can customize flexible scripts for each service scripts.
+- All scripts are logged by default.
+- Easy to run services in containers.
 - Distrubte machine resources to the cloud VM (Not available yet).
-- No more Makefile for orchestrating services.
 
 ## The only config file - `.devkitkat.yml`
 
