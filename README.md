@@ -9,17 +9,21 @@ This is especially helpful for local development that runs/compiles everything f
 ## Key concepts
 
 - It's an alternative solution of docker-compose.
+- It's an alternative solution of Makefile.
 - Convention over configuration. No need to write up complicated config file from scratch.
+- Prepare one image to work on everything (All you need is runnable VM not
+  fully fine-tuned containers/images for deployments)
 - Respect the best practice architecture of Cloud Native.
-- No more Makefile for orchestrating services.
+- No more Makefile for bootstraping.
 
 ## Features
 
 This tool provides the following features:
 
-- You can control services with a handy command.
-- You can customize flexible scripts for each service scripts.
-- All scripts are logged by default.
+- Maintain your services in clean and explicit architecture.
+- Control services with an easy and intuitive command.
+- Fully customizable scripts.
+- Logging everything by default.
 - Easy to run services in containers.
 - Distrubte machine resources to the cloud VM (Not available yet).
 
@@ -66,6 +70,11 @@ services:
 ```
 
 ## Devkitkat image
+
+The key concept is to prepare only one docker image to run services. It's just a
+virtual machine just like your local computer. You install native applications/runtime
+(such as postgresql) on your computer. We just need one workable image. So each
+service has an individual container which initialized from the single image.
 
 When you run your application with docker containers, you might need to write up
 [Dockerfile](https://docs.docker.com/engine/reference/builder/) and build the image at first,
