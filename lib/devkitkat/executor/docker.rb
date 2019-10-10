@@ -4,12 +4,13 @@ require 'docker'
 module Devkitkat
   class Executor
     class Docker
-      attr_reader :service, :script_file
+      attr_reader :service, :script_file, :image
 
       delegate :config, :command, to: :service
 
       def initialize(service)
         @service = service
+        @image = Image.new(config.image_base, config.image_install)
       end
 
       def prepare
@@ -49,7 +50,7 @@ module Devkitkat
       end
 
       def docker_image
-        config.image
+        image.name
       end
   
       def container

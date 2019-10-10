@@ -42,8 +42,16 @@ module Devkitkat
       end
     end
 
-    def image
-      devkitkat_yml.fetch('image', DEFAULT_IMAGE)
+    def image_base
+      if devkitkat_yml['image'].is_a?(String)
+        devkitkat_yml['image']
+      elsif devkitkat_yml['image'].is_a?(Hash)
+        devkitkat_yml.dig('image', 'base')
+      end || DEFAULT_IMAGE
+    end
+
+    def image_install
+      devkitkat_yml.dig('image', 'install') || []
     end
 
     def application

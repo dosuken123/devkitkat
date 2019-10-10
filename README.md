@@ -38,7 +38,9 @@ download/prepare services. These are available keys.
 |`services:<name>`                           |Hash        |Yes     |-|The service name e.g. `rails`, `db`, `redis`|
 |`services:<name>:repo: <value>`             |String      |No      |-|The git URL of the repository|
 |`services:<name>:<key>: <value>`            |Hash        |No      |-|The key and value of the environment variable. e.g. `POSTGRES_PASSWORD: abcdef`. |
-|`image:`                                    |String      |No      |-|The docker image. Only effective when `type` is `docker` or `cloud`|
+|`image:`                                    |Hash or String      |No      |-|The docker image|
+|`image:base:`                               |String      |No      |-|The base image name|
+|`image:install:`                            |Array<String> |No      |-|The installed application on the image|
 |`groups:`                                   |Hash        |No      |-|The groups of the services|
 |`groups:<name>: <service-names>`            |Hash        |No      |-|The name of the group and the service names|
 |`application:`                              |String      |No      |-|The name of the application that consists of the services|
