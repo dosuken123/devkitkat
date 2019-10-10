@@ -269,3 +269,8 @@ The gem is available as open source under the terms of the [MIT License](https:/
 ## Code of Conduct
 
 Everyone interacting in the Devkitkat project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/devkitkat/blob/master/CODE_OF_CONDUCT.md).
+
+## How to release a new version
+
+1. Update `Devkitkat::VERSION`
+1. Execute `bin/release`
