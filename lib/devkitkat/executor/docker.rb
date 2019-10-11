@@ -15,6 +15,7 @@ module Devkitkat
       def prepare
         pull_image
         start_container
+        add_user
       end
 
       def cleanup
@@ -27,7 +28,7 @@ module Devkitkat
         rewrite_root_path!
         new_path = script_path_in_container
 
-        container.exec([new_path])
+        container.exec([new_path], user: user_name)
       end
 
       private
@@ -57,7 +58,6 @@ module Devkitkat
       end
   
       def container_parameter
-        # TODO: Speicfy users otherwise the created files are owned by root
         params = {
           'Cmd' => %w[tail -f],
           'Image' => docker_image,
@@ -91,6 +91,33 @@ module Devkitkat
 
       def start_container
         container.start
+      end
+
+      def user_name
+        'devkitkat'
+      end
+
+      def group_id
+        @group_id ||= `id -u`
+      end
+
+      def user_id
+        @user_id ||= `id -g`
+      end
+
+      def add_user
+        container.exec(['addgroup', '--gid', group_id, user_name])
+
+        container.exec(['adduser',
+          '--uid', user_id,
+          '--gid', group_id,
+          '--shell', '/bin/bash',
+          '--home', root_in_container,
+          '--gecos', '',
+          '--disabled-password',
+          user_name])
+
+        container.exec(['chown', '-R', "#{user_name}:#{user_name}", root_in_container])
       end
   
       def stop_container
