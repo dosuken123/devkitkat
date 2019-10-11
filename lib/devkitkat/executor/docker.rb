@@ -15,7 +15,7 @@ module Devkitkat
       def prepare
         pull_image
         start_container
-        add_user
+        sync_user_with_host
       end
 
       def cleanup
@@ -105,7 +105,7 @@ module Devkitkat
         @user_id ||= `id -g`
       end
 
-      def add_user
+      def sync_user_with_host
         container.exec(['addgroup', '--gid', group_id, user_name])
 
         container.exec(['adduser',
