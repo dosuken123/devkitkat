@@ -1,3 +1,15 @@
+rspec:
+  stage: test
+  tags:
+  - do-runner
+  before_script:
+  - docker info
+  - pwd
+  - gem install bundler
+  - bin/setup
+  script:
+  - bundle exec rspec
+
 # services:
 #   - docker:19.03.1-dind
 
@@ -5,22 +17,22 @@
 #   DOCKER_HOST: tcp://docker:2375
 #   DOCKER_TLS_CERTDIR: ""
 
-rspec:
-  stage: test
-  tags:
-  - do-runner
-  # variables:
-  #   LANG: C.UTF-8
-  #   LC_ALL: C.UTF-8
-  before_script:
-  # - sudo apt-get update
-  # - apt-get install -y cmake docker.io
-  - docker info
-  - pwd
-  - gem install bundler
-  script:
-  # - mkdir ../test
-  # - cp -a . ../test
-  # - cd ../test
-  - bin/setup
-  - bundle exec rspec
+# rspec:
+#   stage: test
+#   tags:
+#   - do-runner
+#   variables:
+#     LANG: C.UTF-8
+#     LC_ALL: C.UTF-8
+#   before_script:
+#   - sudo apt-get update
+#   - apt-get install -y cmake docker.io
+#   - docker info
+#   - pwd
+#   - gem install bundler
+#   script:
+#   - mkdir ../test
+#   - cp -a . ../test
+#   - cd ../test
+#   - bin/setup
+#   - bundle exec rspec
