@@ -2,6 +2,7 @@ require "bundler/setup"
 require "devkitkat"
 require 'rspec/temp_dir'
 require 'pry'
+require_relative 'shared_examples'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
