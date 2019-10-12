@@ -5,6 +5,7 @@ rspec:
   before_script:
   - docker info
   - pwd
+  - whoami
   - gem install bundler
   - bin/setup
   script:
