@@ -13,7 +13,7 @@ rspec:
   #   LANG: C.UTF-8
   #   LC_ALL: C.UTF-8
   before_script:
-  - sudo apt-get update
+  # - sudo apt-get update
   # - apt-get install -y cmake docker.io
   - docker info
   - pwd
