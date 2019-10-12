@@ -13,7 +13,7 @@ module Devkitkat
       end
 
       def prepare
-        pull_image
+        pull_image unless image_exist?
         start_container
         sync_user_with_host
       end
@@ -89,6 +89,12 @@ module Devkitkat
         ::Docker::Image.create('fromImage' => docker_image)
       end
 
+      def image_exist?
+        ::Docker::Image.get(docker_image)
+      rescue Docker::Error::NotFoundError
+        false
+      end
+
       def start_container
         container.start
       end
@@ -121,8 +127,8 @@ module Devkitkat
       end
   
       def stop_container
-        container.stop
-        container.remove
+        # container.stop
+        container.remove(force: true)
       end
     end
   end
