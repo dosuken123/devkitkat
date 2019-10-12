@@ -100,7 +100,7 @@ module Devkitkat
 
       def image_exist?
         ::Docker::Image.get(docker_image)
-      rescue Docker::Error::NotFoundError
+      rescue
         false
       end
 
