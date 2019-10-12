@@ -13,19 +13,13 @@ module Devkitkat
       end
 
       def prepare
-        puts "#{self.class.name} : #{__method__} : 1"
         pull_image unless image_exist?
-        puts "#{self.class.name} : #{__method__} : 2"
         start_container
-        puts "#{self.class.name} : #{__method__} : 3"
         sync_user_with_host
-        puts "#{self.class.name} : #{__method__} : 4"
       end
 
       def cleanup
-        puts "#{self.class.name} : #{__method__} : 5"
         stop_container
-        puts "#{self.class.name} : #{__method__} : 6"
       end
 
       def commit(script_file)
@@ -34,10 +28,7 @@ module Devkitkat
         rewrite_root_path!
         new_path = script_path_in_container
 
-        puts "#{self.class.name} : #{__method__} : 2"
-        container.exec([new_path], user: user_name).tap do
-          puts "#{self.class.name} : #{__method__} : 1"
-        end
+        container.exec([new_path], user: user_name)
       end
 
       private
