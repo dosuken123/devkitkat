@@ -6,6 +6,8 @@ rspec:
   - docker info
   - pwd
   - whoami
+  - echo $SHELL
+  - ruby -v
   - gem install bundler
   - bin/setup
   script:
