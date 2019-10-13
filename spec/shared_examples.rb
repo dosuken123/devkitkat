@@ -2,7 +2,7 @@ shared_examples_for 'service execution' do
   let(:long_script) do
     <<-EOS
 #!/bin/bash
-sleep 2s
+sleep 5s
     EOS
   end
 
@@ -189,6 +189,8 @@ test
           File.write('services/rails/script/configure', export_script)
           execute_devkitkat(%w[reconfigure rails])
 
+          dir = root_dir if defined?(root_dir)
+
           expect(File.read('services/rails/log/reconfigure.log'))
             .to match(%r{MI_SELF_DIR=.*#{dir}/services/rails.*})
         end
@@ -201,6 +203,8 @@ test
             File.write('services/postgres/script/configure', export_script)
             File.write('services/redis/script/configure', export_script)
             execute_devkitkat(%w[reconfigure data])
+
+            dir = root_dir if defined?(root_dir)
 
             expect(File.read('services/postgres/log/reconfigure.log'))
               .to match(%r{MI_SELF_DIR=.*#{dir}/services/postgres.*})
@@ -238,7 +242,7 @@ test
 
     context 'when targets group' do
       context 'when one of the scripts failed' do
-        it 'performs fast fail' do
+        it 'performs fast fail', slow: true do
           in_tmp_dir(sample_yml) do |dir|
             execute_devkitkat(%w[add-script data test])
             File.write('services/postgres/script/test', long_script)
@@ -247,7 +251,7 @@ test
             execute_devkitkat(%w[test data])
             diff = Time.now - start
 
-            expect(diff).to be < 1
+            expect(diff).to be < 9
           end
         end
       end
@@ -268,6 +272,8 @@ test
           execute_devkitkat(%w[add-script rails configure])
           File.write('services/rails/script/configure', export_script)
           execute_devkitkat(%w[configure rails])
+
+          dir = root_dir if defined?(root_dir)
 
           expect(File.read('services/rails/log/configure.log'))
             .to match(%r{MI_APPLICATION=.*devkitkat.*})

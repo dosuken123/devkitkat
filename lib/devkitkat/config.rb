@@ -3,7 +3,7 @@ module Devkitkat
     DEVKITKAT_FILE_NAME = '.devkitkat.yml'
     HIDDEN_SERVICES = %w[system]
     DEFAULT_APPLICATION_NAME = 'devkitkat'
-    DEFAULT_IMAGE = 'ubuntu:18.04'
+    DEFAULT_IMAGE = 'registry.gitlab.com/dosuken123/thin-gdk/thin-gdk-monolith:master'
 
     attr_reader :devkitkat_yml, :kit_root
 

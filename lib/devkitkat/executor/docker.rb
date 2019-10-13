@@ -8,6 +8,8 @@ module Devkitkat
 
       delegate :config, :command, to: :service
 
+      ROOT_IN_CONTAINER = '/devkitkat'
+
       def initialize(service)
         @service = service
       end
@@ -35,18 +37,18 @@ module Devkitkat
   
       def rewrite_root_path!
         content = File.read(script_file)
-        new_content = content.gsub(command.kit_root, root_in_container)
+        new_content = content.gsub(command.kit_root, ROOT_IN_CONTAINER)
         File.write(script_file, new_content)
       end
 
       def script_path_in_container
         relative_path = script_file.delete_prefix(command.kit_root)
-        File.join(root_in_container, relative_path)
+        File.join(ROOT_IN_CONTAINER, relative_path)
       end
 
       def log_path_in_container
         relative_path = service.log_path.delete_prefix(command.kit_root)
-        File.join(root_in_container, relative_path)
+        File.join(ROOT_IN_CONTAINER, relative_path)
       end
 
       def docker_image
@@ -63,7 +65,7 @@ module Devkitkat
           'Image' => docker_image,
           'name' => service.container_name,
           'HostConfig' => {
-            'Binds' => ["#{command.kit_root}:#{root_in_container}"]
+            'Binds' => ["#{command.kit_root}:#{ROOT_IN_CONTAINER}"]
           }
         }
 
@@ -81,12 +83,10 @@ module Devkitkat
         params
       end
 
-      def root_in_container
-        "/devkitkat"
-      end
-
       def pull_image
+        puts "Pulling image #{docker_image}..."
         ::Docker::Image.create('fromImage' => docker_image)
+        puts "Pulled image #{docker_image}..."
       end
 
       def image_exist?
@@ -118,12 +118,12 @@ module Devkitkat
           '--uid', user_id,
           '--gid', group_id,
           '--shell', '/bin/bash',
-          '--home', root_in_container,
+          '--home', ROOT_IN_CONTAINER,
           '--gecos', '',
           '--disabled-password',
           user_name])
 
-        container.exec(['chown', '-R', "#{user_name}:#{user_name}", root_in_container])
+        container.exec(['chown', '-R', "#{user_name}:#{user_name}", ROOT_IN_CONTAINER])
       end
   
       def stop_container

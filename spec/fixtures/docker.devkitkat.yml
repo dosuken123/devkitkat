@@ -1,9 +1,12 @@
-image: ubuntu:18.04
+image: registry.gitlab.com/dosuken123/thin-gdk/thin-gdk-monolith:master
 
 groups:
   data:
     - postgres
     - redis
+
+variables:
+  RAILS_ENV: development
 
 services:
   rails:

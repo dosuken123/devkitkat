@@ -13,6 +13,7 @@ RSpec.describe Devkitkat do
 
   context 'with docker.devkitkat.yml' do
     let(:sample_yml) { 'spec/fixtures/docker.devkitkat.yml' }
+    let(:root_dir) { Devkitkat::Executor::Docker::ROOT_IN_CONTAINER }
 
     it_behaves_like 'service execution'
   end
