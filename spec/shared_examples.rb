@@ -2,7 +2,9 @@ shared_examples_for 'service execution' do
   let(:long_script) do
     <<-EOS
 #!/bin/bash
+set -e
 sleep 5s
+echo "Finished long task"
     EOS
   end
 
@@ -242,16 +244,15 @@ test
 
     context 'when targets group' do
       context 'when one of the scripts failed' do
-        it 'performs fast fail', slow: true do
+        it 'performs fast fail' do
           in_tmp_dir(sample_yml) do |dir|
             execute_devkitkat(%w[add-script data test])
             File.write('services/postgres/script/test', long_script)
             File.write('services/redis/script/test', failed_script)
-            start = Time.now
             execute_devkitkat(%w[test data])
-            diff = Time.now - start
 
-            expect(diff).to be < 9
+            expect(File.read('services/postgres/log/test.log'))
+              .not_to match(/Finished long task/)
           end
         end
       end

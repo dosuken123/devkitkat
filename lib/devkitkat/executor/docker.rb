@@ -4,6 +4,8 @@ require 'docker'
 module Devkitkat
   class Executor
     class Docker
+      PreparationError = Class.new(StandardError)
+
       attr_reader :service, :script_file
 
       delegate :config, :command, to: :service
@@ -30,7 +32,7 @@ module Devkitkat
         rewrite_root_path!
         new_path = script_path_in_container
 
-        container.exec([new_path], user: user_name)
+        exec([new_path], user: user_name)
       end
 
       private
@@ -111,10 +113,23 @@ module Devkitkat
         @user_id ||= `id -g`
       end
 
-      def sync_user_with_host
-        container.exec(['addgroup', '--gid', group_id, user_name])
+      def exec(cmds, params = {})
+        stdout_messages, stderr_messages, exit_code =
+          container.exec(cmds, params)
 
-        container.exec(['adduser',
+        exit_code == 0 ? true : false
+      end
+
+      def exec!(cmds, params = {})
+        unless exec(cmds, params)
+          raise PreparationError, "Failed to execute command in container. cmds: #{cmds}"
+        end
+      end
+
+      def sync_user_with_host
+        exec!(['addgroup', '--gid', group_id, user_name])
+
+        exec!(['adduser',
           '--uid', user_id,
           '--gid', group_id,
           '--shell', '/bin/bash',
@@ -123,7 +138,7 @@ module Devkitkat
           '--disabled-password',
           user_name])
 
-        container.exec(['chown', '-R', "#{user_name}:#{user_name}", ROOT_IN_CONTAINER])
+        exec!(['chown', '-R', "#{user_name}:#{user_name}", ROOT_IN_CONTAINER])
       end
   
       def stop_container
