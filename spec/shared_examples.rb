@@ -45,18 +45,10 @@ test
   context 'when executes help' do
     it 'shows help' do
       in_tmp_dir(sample_yml) do
-        expect_any_instance_of(Devkitkat::Command).to receive(:show_help).once
+        expect_any_instance_of(Devkitkat::Command)
+          .to receive(:show_help).once
 
         execute_devkitkat(%w[help])
-      end
-    end
-
-    it 'shows help' do
-      in_tmp_dir(sample_yml) do
-        expect_any_instance_of(Devkitkat::Command)
-          .to receive(:show_help).once.and_call_original
-
-        execute_devkitkat(%w[--help])
       end
     end
   end
