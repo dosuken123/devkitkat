@@ -165,6 +165,8 @@ Devkitkat provides predefined scripts that are useful in common development scen
 |`docker-push`  |`REGISTRY`               |Push a docker image|
 |`add-user`     |`TAG`                    |Add a user to the current system (It's useful for containerized images)|
 |`add-script`   |`--basic`                |Add a script to services|
+|`help`         |N/A                      |Show help|
+|`version`         |N/A                   |Show version|
 |`poop`         |N/A                      |:poop:|
 
 ## Predefined group names
