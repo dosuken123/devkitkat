@@ -4,9 +4,40 @@ module Devkitkat
 
     def initialize
       @options = {}
+      option_parser.parse!
 
-      OptionParser.new do |opts|
+      @script, @target, *@args = ARGV
+
+      show_help if script == 'help'
+    end
+
+    def tty?
+      options[:tty]
+    end
+
+    def variables
+      options[:variables]
+    end
+
+    def tmp_dir
+      File.join(kit_root, 'tmp')
+    end
+
+    def create_tmp_dir
+      FileUtils.mkdir_p(tmp_dir)
+    end
+
+    def kit_root
+      Dir.pwd # TODO: root_path
+    end
+
+    private
+
+    def option_parser
+      @option_parser ||= OptionParser.new do |opts|
         opts.banner = "Usage: devkitkat <script> <target> [options]"
+        opts.separator ""
+        opts.separator "Options:"
 
         opts.on("-p", "--path PATH", "The root path of the .devkitkat.yml") do |v|
           options[:root_path] = v
@@ -37,29 +68,32 @@ module Devkitkat
         opts.on("-t", "--tty", "TTY mode. In this mode, log won't be emitted.") do |v|
           options[:tty] = v
         end
-      end.parse!
 
-      @script, @target, *@args = ARGV
+        opts.on("-v", "--version", "Show version") do |v|
+          puts Devkitkat::VERSION
+          exit
+        end
+
+        opts.on("-h", "--help", "Show help") do |v|
+          show_help
+        end
+
+        opts.separator ""
+        opts.separator "Commands:"
+        opts.separator "add-script          - Add a script file"
+        opts.separator "add-example         - Add an example file"
+        opts.separator "add-shared-script   - Add s shared script"
+        opts.separator "clone               - Clone repository"
+        opts.separator "pull                - Pull latest source code"
+        opts.separator "clean               - Clean the service dir"
+        opts.separator "poop                - Poop"
+        opts.separator "help                - Show help"
+      end
     end
 
-    def tty?
-      options[:tty]
-    end
-
-    def variables
-      options[:variables]
-    end
-
-    def tmp_dir
-      File.join(kit_root, 'tmp')
-    end
-
-    def create_tmp_dir
-      FileUtils.mkdir_p(tmp_dir)
-    end
-
-    def kit_root
-      Dir.pwd # TODO: root_path
+    def show_help
+      puts option_parser.help
+      exit
     end
   end
 end

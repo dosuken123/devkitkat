@@ -12,15 +12,14 @@ module Devkitkat
         raise ArgumentError, 'TTY mode accepts only one service'
       end
 
-      log_paths = target_services.map(&:log_path)
-      puts %Q{See the log at \n#{log_paths.join("\n")}}
-
       if target_services.count == 1
         # If the target is only one, it could be console access (TTY)
         # so we can't run in parallel.
         service = target_services.first
         execute_for(service)
       else
+        print_log_paths
+
         Parallel.map(target_services, progress: 'Executing', in_processes: 8) do |service|
           execute_for(service)
         end
@@ -41,6 +40,11 @@ module Devkitkat
     def target_services
       @target_services ||= config.resolve!(command.target, exclude: command.options[:exclude])
                                   .map { |name| Service.new(name, config, command) }
+    end
+
+    def print_log_paths
+      log_paths = target_services.map(&:log_path)
+      puts %Q{See the log at \n#{log_paths.join("\n")}}
     end
   end
 end
