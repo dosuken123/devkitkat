@@ -3,6 +3,7 @@ rspec:
   tags:
   - do-runner
   before_script:
+  - docker rm -f $(docker ps -a -q)
   - docker info
   - pwd
   - gem install bundler
