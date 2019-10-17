@@ -1,3 +1,7 @@
+stages:
+  - test
+  - release
+
 rspec:
   stage: test
   tags:
@@ -10,6 +14,17 @@ rspec:
   - bin/setup
   script:
   - bundle exec rspec
+
+release:
+  stage: release
+  tags:
+  - do-runner
+  script:
+  - bin/release
+  only:
+    changes:
+      - lib/devkitkat/version.rb
+  when: manual
 
 # services:
 #   - docker:19.03.1-dind
