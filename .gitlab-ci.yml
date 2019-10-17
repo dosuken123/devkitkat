@@ -24,7 +24,6 @@ release:
   only:
     changes:
       - lib/devkitkat/version.rb
-  when: manual
 
 # services:
 #   - docker:19.03.1-dind
