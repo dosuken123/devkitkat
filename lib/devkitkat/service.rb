@@ -24,6 +24,16 @@ set -e
       @name, @config, @command = name, config, command
     end
 
+    def execute
+      execute!
+
+      true
+    rescue ScriptError => e
+      puts "Failure: #{e}".colorize(:red)
+
+      false
+    end
+
     def execute!
       executor.prepare
 
