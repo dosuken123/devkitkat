@@ -1,4 +1,5 @@
 [![pipeline status](https://gitlab.com/dosuken123/devkitkat/badges/master/pipeline.svg)](https://gitlab.com/dosuken123/devkitkat/commits/master)
+[![Gem Version](https://badge.fury.io/rb/devkitkat.svg)](https://badge.fury.io/rb/devkitkat)
 
 # Devkitkat
 
