@@ -152,23 +152,40 @@ source ${MI_SYSTEM_SCRIPT_SHARED_DIR}
 # Call a function defiend in the `shared` script
 ```
 
-## Predefined scripts
+## Utility commands, Predefined scripts and Options
 
 Devkitkat provides predefined scripts that are useful in common development scenarios.
 
-|Script name    |Available options        |Description|
-|---            |---                      |---|
-|`clone`        |`GIT_DEPTH` ... Speicify git-depth|Clone source code from the `services:<name>:repo:`|
-|`pull`         |`GIT_DEPTH` ... Speicify git-depth|Pull source code from the `services:<name>:repo:`|
-|`download`     |N/A                      |Download source code from the `services:<name>:repo:`|
-|`clean`        |N/A                      |Remove all files from `data`, `cache`, `log` and `src` dirs|
-|`docker-build` |`TAG`                    |Build a docker image|
-|`docker-push`  |`REGISTRY`               |Push a docker image|
-|`add-user`     |`TAG`                    |Add a user to the current system (It's useful for containerized images)|
-|`add-script`   |`--basic`                |Add a script to services|
-|`help`         |N/A                      |Show help|
-|`version`         |N/A                   |Show version|
-|`poop`         |N/A                      |:poop:|
+```
+Usage: devkitkat <command/script> <target> [args] [options]
+
+Options:
+    -p, --path PATH                  The root path of the .devkitkat.yml
+        --exclude SERVICE            Exclude serviced from the specified target
+    -e, --env-var VARIABLE           additional environment variables
+    -d, --depth DEPTH                Git depth for pull/fetch
+    -r, --remote REMOTE              Git remote
+    -b, --branch BRANCH              Git branch
+    -t, --tty                        TTY mode. In this mode, log won't be emitted.
+    -v, --version                    Show version
+    -h, --help                       Show help
+
+Utility Commands:
+add-script          - Add a script file
+add-example         - Add an example file
+add-shared-script   - Add s shared script
+help                - Show help
+
+Predefined scripts:
+clone               - Clone repository
+pull                - Pull latest source code
+clean               - Clean the service dir
+poop                - Poop
+```
+
+Example:
+
+`devkitkat start rails --path $HOME/awesome-app-dev-kit/ --env-var AWS_CRED=XXXXX`
 
 ## Predefined group names
 
@@ -221,7 +238,7 @@ For example, if you want to start `rails` service, your command would look like
 
 `devkitkat start backend --exclude redis`
 
-## Sample commands
+## Workflow example
 
 ```
 devkitkat pull default                          # Pull source code for the default group
@@ -230,16 +247,6 @@ devkitkat start postgresql,redis,gitaly         # It starts `postgresql`, `redis
 devkitkat seed rails                            # It Seeds for `rails` service
 devkitkat start default                         # It starts services of the `default` group
 ```
-
-## Options for `devkitkat`
-
-- `--path /path/to/the` ... The root directory that contains `.devkitkat.yml` and manage the service dirs.
-- `--variables KEY=VAR` ... The additional environment variables for services.
-- `--exclude <name>` ... The excluded service from the group.
-
-Example:
-
-`devkitkat start rails --path $HOME/awesome-app-dev-kit/ --variables AWS_CRED=XXXXX`
 
 ## Installation
 

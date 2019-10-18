@@ -35,7 +35,7 @@ module Devkitkat
 
     def option_parser
       @option_parser ||= OptionParser.new do |opts|
-        opts.banner = "Usage: devkitkat <script> <target> [options]"
+        opts.banner = "Usage: devkitkat <command/script> <target> [args] [options]"
         opts.separator ""
         opts.separator "Options:"
 
@@ -79,15 +79,17 @@ module Devkitkat
         end
 
         opts.separator ""
-        opts.separator "Commands:"
+        opts.separator "Utility Commands:"
         opts.separator "add-script          - Add a script file"
         opts.separator "add-example         - Add an example file"
         opts.separator "add-shared-script   - Add s shared script"
+        opts.separator "help                - Show help"
+        opts.separator ""
+        opts.separator "Predefined scripts:"
         opts.separator "clone               - Clone repository"
         opts.separator "pull                - Pull latest source code"
         opts.separator "clean               - Clean the service dir"
         opts.separator "poop                - Poop"
-        opts.separator "help                - Show help"
       end
     end
 
