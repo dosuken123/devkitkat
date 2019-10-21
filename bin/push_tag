@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+version=$(grep 'VERSION' lib/devkitkat/version.rb | sed 's/^.*"\(.*\)".*$/\1/')
+tag_name="v${version}"
+git tag -a $tag_name -m "${tag_name} release"
+git push origin $tag_name
