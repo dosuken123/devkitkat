@@ -194,6 +194,19 @@ test
     end
   end
 
+  context 'when executes exec' do
+    it 'executes the command in the src dir' do
+      in_tmp_dir(sample_yml) do |dir|
+        FileUtils.mkdir_p("#{dir}/services/rails/src")
+        File.write("#{dir}/services/rails/src/test", 'This is a test file')
+        execute_devkitkat(%w[exec rails cat test])
+
+        expect(File.read('services/rails/log/exec.log'))
+          .to include('This is a test file')
+      end
+    end
+  end
+
   context 'when executes reconfigure' do
     context 'when export all variables' do
       it 'prints correct variables' do
@@ -293,6 +306,8 @@ test
             .to match(%r{MI_SELF_DIR=.*#{dir}/services/rails.*})
           expect(File.read('services/rails/log/configure.log'))
             .to match(%r{RAILS_ENV=.*development.*})
+          expect(File.read('services/rails/log/configure.log'))
+            .to match(%r{GEM_PATH=.*#{dir}/services/rails/cache.*})
         end
       end
 

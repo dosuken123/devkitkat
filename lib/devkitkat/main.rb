@@ -14,13 +14,13 @@ module Devkitkat
 
       results = []
 
+      print_log_paths
+
       if target_services.count == 1
         # If the target is only one, it could be console access (TTY)
         # so we can't run in parallel.
         results << target_services.first.execute
       else
-        print_log_paths
-
         results = Parallel.map(target_services, progress: 'Executing', in_processes: 8) do |service|
           service.execute.tap do |success|
             raise Parallel::Kill unless success
@@ -39,6 +39,8 @@ module Devkitkat
     end
 
     def print_log_paths
+      return if command.tty?
+
       log_paths = target_services.map(&:log_path)
       puts %Q{See the log at \n#{log_paths.join("\n")}}
     end

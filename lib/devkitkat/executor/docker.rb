@@ -106,7 +106,7 @@ module Devkitkat
       end
 
       def group_id
-        @group_id ||= `id -u`
+        @group_id ||= `id -u`.delete("\n")
       end
 
       def user_id

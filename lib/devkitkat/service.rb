@@ -246,6 +246,11 @@ See the log file: #{log_path}]
       executor.write(%Q{echo "💩"})
     end
 
+    def exec
+      executor.write(%Q{cd #{src_dir}})
+      executor.write(%Q{#{args.join(' ')}})
+    end
+
     def executor
       @executor ||= Executor.new(self)
     end
