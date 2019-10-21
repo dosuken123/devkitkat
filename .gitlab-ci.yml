@@ -22,8 +22,7 @@ release:
   script:
   - bin/release
   only:
-    changes:
-      - lib/devkitkat/version.rb
+    - tags
 
 # services:
 #   - docker:19.03.1-dind
