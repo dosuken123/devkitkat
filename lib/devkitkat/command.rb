@@ -9,6 +9,7 @@ module Devkitkat
       @script, @target, *@args = ARGV
 
       show_help if script == 'help'
+      show_version if script == 'version'
     end
 
     def tty?
@@ -103,6 +104,11 @@ module Devkitkat
 
     def show_help
       puts option_parser.help
+      exit
+    end
+
+    def show_version
+      puts Devkitkat::VERSION
       exit
     end
   end
