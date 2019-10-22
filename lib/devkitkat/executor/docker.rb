@@ -117,6 +117,10 @@ module Devkitkat
         stdout_messages, stderr_messages, exit_code =
           container.exec(cmds, params)
 
+        if command.debug?
+          puts "#{self.class.name} - #{__callee__}: stdout_messages: #{stdout_messages} stderr_messages: #{stderr_messages}"
+        end
+
         exit_code == 0 ? true : false
       end
 

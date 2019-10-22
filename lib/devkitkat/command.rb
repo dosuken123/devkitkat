@@ -19,8 +19,12 @@ module Devkitkat
       options[:variables]
     end
 
+    def debug?
+      options[:debug]
+    end
+
     def tmp_dir
-      File.join(kit_root, 'tmp')
+      File.join(kit_root, '.devkitkat')
     end
 
     def create_tmp_dir
@@ -51,6 +55,10 @@ module Devkitkat
         opts.on("-e", "--env-var VARIABLE", "additional environment variables") do |v|
           options[:variables] ||= {}
           options[:variables].merge!(Hash[*v.split('=')])
+        end
+
+        opts.on("-d", "--debug", "Debug mode") do |v|
+          options[:debug] = v
         end
 
         opts.on("-d", "--depth DEPTH", "Git depth for pull/fetch") do |v|
