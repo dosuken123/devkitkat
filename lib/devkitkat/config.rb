@@ -23,10 +23,12 @@ module Devkitkat
                    all_services
                  elsif group = find_group(target)
                    services_for_group(group)
+                 elsif services = find_comma_separated_services(target)
+                  services
                  elsif service = find_service(target)
                    [service]
                  else
-                   raise ArgumentError, "The target name #{target} couldn't be resolved"
+                   raise_error(target)
                  end
 
       services = services - exclude if exclude
@@ -80,6 +82,16 @@ module Devkitkat
       services.find { |service| service == target }
     end
 
+    def find_comma_separated_services(target)
+      return unless target.include?(',')
+
+      target.split(',').map do |t|
+        find_service(t).tap do |service|
+          raise_error(t) unless service
+        end
+      end
+    end
+
     def load_config
       File.read(config_path).yield_self do |content|
         YAML.load(content)
@@ -88,6 +100,10 @@ module Devkitkat
 
     def config_path
       File.join(kit_root, DEVKITKAT_FILE_NAME)
+    end
+
+    def raise_error(target)
+      raise ArgumentError, "The target name #{target} couldn't be resolved"
     end
   end
 end

@@ -115,6 +115,18 @@ test
           end
         end
       end
+
+      context 'when specify targets with comma separted string' do
+        it 'executes a script to the services' do
+          in_tmp_dir(sample_yml) do
+            execute_devkitkat(%w[add-script redis,rails test])
+
+            expect(File.exist?('services/postgres/script/test')).to eq(false)
+            expect(File.exist?('services/redis/script/test')).to eq(true)
+            expect(File.exist?('services/rails/script/test')).to eq(true)
+          end
+        end
+      end
     end
 
     context 'when multiple arguments are passed' do
