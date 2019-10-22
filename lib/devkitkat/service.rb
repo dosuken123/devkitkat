@@ -105,32 +105,32 @@ set -e
         executor.write("export #{key}=#{value}")
       end
 
-      executor.write("export MI_ROOT_DIR=#{kit_root}")
-      executor.write("export MI_ENVIRONMENT_TYPE=#{config.environment_type.to_s}")
-      executor.write("export MI_APPLICATION=#{config.application.to_s}")
+      executor.write("export DK_ROOT_DIR=#{kit_root}")
+      executor.write("export DK_ENVIRONMENT_TYPE=#{config.environment_type.to_s}")
+      executor.write("export DK_APPLICATION=#{config.application.to_s}")
     end
 
     def inject_public_variables
       all_services.each do |service|
-        executor.write("export MI_#{service.name.upcase}_DIR=#{service.service_dir}")
+        executor.write("export DK_#{service.name.upcase}_DIR=#{service.service_dir}")
 
         DIVISIONS.each do |division|
-          executor.write("export MI_#{service.name.upcase}_#{division.upcase}_DIR=#{service.send("#{division}_dir")}")
+          executor.write("export DK_#{service.name.upcase}_#{division.upcase}_DIR=#{service.send("#{division}_dir")}")
         end
 
-        executor.write("export MI_#{service.name.upcase}_SHARED_SCRIPT_DIR=#{service.shared_script_dir}")
+        executor.write("export DK_#{service.name.upcase}_SHARED_SCRIPT_DIR=#{service.shared_script_dir}")
 
         config.service_hash(service.name).each do |key, value|
-          executor.write("export MI_#{service.name.upcase}_#{key.upcase}=#{value}")
+          executor.write("export DK_#{service.name.upcase}_#{key.upcase}=#{value}")
         end
       end
     end
 
     def inject_private_variables
-      executor.write("export MI_SELF_DIR=#{service_dir}")
+      executor.write("export DK_SELF_DIR=#{service_dir}")
 
       DIVISIONS.each do |division|
-        executor.write("export MI_SELF_#{division.upcase}_DIR=#{send("#{division}_dir")}")
+        executor.write("export DK_SELF_#{division.upcase}_DIR=#{send("#{division}_dir")}")
       end
 
       config.service_hash(name).each do |key, value|

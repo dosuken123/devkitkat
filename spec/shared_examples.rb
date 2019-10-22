@@ -36,7 +36,7 @@ test()
   let(:function_script) do
     <<-EOS
 #!/bin/bash
-source ${MI_SYSTEM_SHARED_SCRIPT_DIR}
+source ${DK_SYSTEM_SHARED_SCRIPT_DIR}
 
 test
     EOS
@@ -218,7 +218,7 @@ test
           dir = root_dir if defined?(root_dir)
 
           expect(File.read('services/rails/log/reconfigure.log'))
-            .to match(%r{MI_SELF_DIR=.*#{dir}/services/rails.*})
+            .to match(%r{DK_SELF_DIR=.*#{dir}/services/rails.*})
         end
       end
 
@@ -233,13 +233,13 @@ test
             dir = root_dir if defined?(root_dir)
 
             expect(File.read('services/postgres/log/reconfigure.log'))
-              .to match(%r{MI_SELF_DIR=.*#{dir}/services/postgres.*})
+              .to match(%r{DK_SELF_DIR=.*#{dir}/services/postgres.*})
             expect(File.read('services/postgres/log/reconfigure.log'))
-              .to match(%r{MI_REDIS_PORT=.*6379.*})
+              .to match(%r{DK_REDIS_PORT=.*6379.*})
             expect(File.read('services/redis/log/reconfigure.log'))
-              .to match(%r{MI_SELF_DIR=.*#{dir}/services/redis.*})
+              .to match(%r{DK_SELF_DIR=.*#{dir}/services/redis.*})
             expect(File.read('services/redis/log/reconfigure.log'))
-              .to match(%r{MI_POSTGRES_PORT=.*5432.*})
+              .to match(%r{DK_POSTGRES_PORT=.*5432.*})
           end
         end
       end
@@ -301,9 +301,9 @@ test
           dir = root_dir if defined?(root_dir)
 
           expect(File.read('services/rails/log/configure.log'))
-            .to match(%r{MI_APPLICATION=.*devkitkat.*})
+            .to match(%r{DK_APPLICATION=.*devkitkat.*})
           expect(File.read('services/rails/log/configure.log'))
-            .to match(%r{MI_SELF_DIR=.*#{dir}/services/rails.*})
+            .to match(%r{DK_SELF_DIR=.*#{dir}/services/rails.*})
           expect(File.read('services/rails/log/configure.log'))
             .to match(%r{RAILS_ENV=.*development.*})
           expect(File.read('services/rails/log/configure.log'))

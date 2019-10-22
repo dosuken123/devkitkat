@@ -147,7 +147,7 @@ To include the shared script, you need to update your service script as the foll
 
 ```shell
 #!/bin/bash
-source ${MI_SYSTEM_SCRIPT_SHARED_DIR}
+source ${DK_SYSTEM_SCRIPT_SHARED_DIR}
 
 # Call a function defiend in the `shared` script
 ```
@@ -195,26 +195,26 @@ Example:
 
 Devkitkat inject these predefined variables into the scripts by default.
 
-- `MI_<service>_DIR` ... The root directory path of the service.
-- `MI_<service>_SCRIPT_DIR` ... The script directory path of the service.
-- `MI_<service>_SRC_DIR` ... The source directory path of the service.
-- `MI_<service>_CACHE_DIR` ... The cache directory path of the service.
-- `MI_<service>_DATA_DIR` ... The data directory path of the service.
-- `MI_<service>_LOG_DIR` ... The log directory path of the service.
-- `MI_<service>_EXAMPLE_DIR` ... The example directory path of the service.
-- `MI_<service>_<key>` ... The value of the user-defined variable.
+- `DK_<service>_DIR` ... The root directory path of the service.
+- `DK_<service>_SCRIPT_DIR` ... The script directory path of the service.
+- `DK_<service>_SRC_DIR` ... The source directory path of the service.
+- `DK_<service>_CACHE_DIR` ... The cache directory path of the service.
+- `DK_<service>_DATA_DIR` ... The data directory path of the service.
+- `DK_<service>_LOG_DIR` ... The log directory path of the service.
+- `DK_<service>_EXAMPLE_DIR` ... The example directory path of the service.
+- `DK_<service>_<key>` ... The value of the user-defined variable.
 
 NOTE:
  - User-defined variables are injected with the bare name. e.g. If you define
    `VERSION: 1`, then you get the value with `echo $VERSION`. From the other services,
-   the variable can be fetched as `MI_<service>_<key>`.
+   the variable can be fetched as `DK_<service>_<key>`.
  - `service` is the *uppercase* service *name*. e.g. if the service name is
-  `rails`, `MI_RAILS_DIR` is the root directory path of the service.
- - `key` is *uppercase* e.g. `MI_RAILS_HOST`
+  `rails`, `DK_RAILS_DIR` is the root directory path of the service.
+ - `key` is *uppercase* e.g. `DK_RAILS_HOST`
  - You can also use `SELF` instead of specifying a service name.
    The `SELF` indicates that it's a context specific parameter, for example,
-   if you run a script for `workhorse` service, `MI_SELF_DIR` is `services/workhorse`,
-   on the other hand, if you run a script for `gitaly` service, `MI_SELF_DIR` is `services/gitaly`.
+   if you run a script for `workhorse` service, `DK_SELF_DIR` is `services/workhorse`,
+   on the other hand, if you run a script for `gitaly` service, `DK_SELF_DIR` is `services/gitaly`.
 
 ## How to control services via scripts
 
