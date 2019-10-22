@@ -3,10 +3,15 @@
 # Update /home/shinya/workspace/devkitkat/lib/devkitkat/version.rb
 read -p "Update lib/devkitkat/version.rb and press enter key"
 
+# Update Gemfile.lock
 bundle install
 
-# # Push tag
-# version=$(grep 'VERSION' lib/devkitkat/version.rb | sed 's/^.*"\(.*\)".*$/\1/')
-# tag_name="v${version}"
-# git tag -a $tag_name -m "${tag_name} release"
-# git push origin $tag_name
+version=$(grep 'VERSION' lib/devkitkat/version.rb | sed 's/^.*"\(.*\)".*$/\1/')
+
+# Commit
+git commit -am "Update version to ${version}"
+
+# Push tag
+tag_name="v${version}"
+git tag -a $tag_name -m "${tag_name} release"
+git push origin $tag_name
