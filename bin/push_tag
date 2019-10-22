@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+current_branch=$(git branch | grep '^*' | awk '{ print $2 }')
+
+if [ $current_branch != 'master' ]; then
+  echo "You must be on master branch! current_branch: ${current_branch}"
+  exit 1
+fi
+
 # Update /home/shinya/workspace/devkitkat/lib/devkitkat/version.rb
 read -p "Update lib/devkitkat/version.rb and press enter key"
 
@@ -10,6 +17,7 @@ version=$(grep 'VERSION' lib/devkitkat/version.rb | sed 's/^.*"\(.*\)".*$/\1/')
 
 # Commit
 git commit -am "Update version to ${version}"
+git push origin master
 
 # Push tag
 tag_name="v${version}"
