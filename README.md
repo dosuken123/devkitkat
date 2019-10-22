@@ -248,6 +248,10 @@ devkitkat seed rails                            # It Seeds for `rails` service
 devkitkat start default                         # It starts services of the `default` group
 ```
 
+## Supported docker version
+
+Docker 19.03.4+
+
 ## Installation
 
     $ gem install devkitkat
