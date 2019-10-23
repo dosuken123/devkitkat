@@ -8,10 +8,6 @@ module Devkitkat
     end
 
     def execute
-      if command.tty? && target_services.count > 1
-        raise ArgumentError, 'TTY mode accepts only one service'
-      end
-
       results = []
 
       print_log_paths
@@ -39,7 +35,7 @@ module Devkitkat
     end
 
     def print_log_paths
-      return if command.tty?
+      return if command.interactive?
 
       log_paths = target_services.map(&:log_path)
       puts %Q{See the log at \n#{log_paths.join("\n")}}

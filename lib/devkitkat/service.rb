@@ -139,7 +139,7 @@ set -e
     end
 
     def setup_logger
-      return if command.tty?
+      return if command.interactive?
 
       executor.write("exec > #{log_path} 2>&1")
     end

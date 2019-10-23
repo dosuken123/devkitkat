@@ -164,7 +164,7 @@ Options:
         --exclude SERVICE            Exclude serviced from the specified target
     -e, --env-var VARIABLE           additional environment variables
     -d, --debug                      Debug mode
-    -t, --tty                        TTY mode. In this mode, log won't be emitted.
+    -i, --interactive                Interactive mode. STDOUT is streamed in console.
     -v, --version                    Show version
     -h, --help                       Show help
 

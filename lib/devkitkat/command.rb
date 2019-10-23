@@ -12,8 +12,8 @@ module Devkitkat
       show_version if script == 'version'
     end
 
-    def tty?
-      options[:tty]
+    def interactive?
+      options[:interactive]
     end
 
     def variables
@@ -62,8 +62,8 @@ module Devkitkat
           options[:debug] = v
         end
 
-        opts.on("-t", "--tty", "TTY mode. In this mode, log won't be emitted.") do |v|
-          options[:tty] = v
+        opts.on("-i", "--interactive", "Interactive mode. STDOUT is streamed in console.") do |v|
+          options[:interactive] = v
         end
 
         opts.on("-v", "--version", "Show version") do |v|
