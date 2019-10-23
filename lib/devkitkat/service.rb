@@ -209,22 +209,21 @@ See the log file: #{log_path}]
     def clone
       return unless repo_defined?
 
-      options = []
+      cmd = <<-EOS
+if [ -n "$GIT_DEPTH" ]; then
+  git clone #{repo} #{src_dir} --depth $GIT_DEPTH
+else
+  git clone #{repo} #{src_dir}
+fi
+      EOS
 
-      if command.options[:git_depth]
-        options << "--depth #{command.options[:git_depth]}"
-      end
-
-      executor.write("git clone #{repo} #{src_dir} #{options.join(' ')}")
+      executor.write(cmd)
     end
 
     def pull
       return unless repo_defined?
 
-      remote = command.options[:git_remote] || 'origin'
-      branch = command.options[:git_branch] || 'master'
-
-      executor.write("git pull #{remote} #{branch}")
+      executor.write("git pull origin master")
     end
 
     def clean

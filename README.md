@@ -163,9 +163,7 @@ Options:
     -p, --path PATH                  The root path of the .devkitkat.yml
         --exclude SERVICE            Exclude serviced from the specified target
     -e, --env-var VARIABLE           additional environment variables
-    -d, --depth DEPTH                Git depth for pull/fetch
-    -r, --remote REMOTE              Git remote
-    -b, --branch BRANCH              Git branch
+    -d, --debug                      Debug mode
     -t, --tty                        TTY mode. In this mode, log won't be emitted.
     -v, --version                    Show version
     -h, --help                       Show help
@@ -177,7 +175,7 @@ add-shared-script   - Add s shared script
 help                - Show help
 
 Predefined scripts:
-clone               - Clone repository
+clone               - Clone repository (Available options: `GIT_DEPTH`)
 pull                - Pull latest source code
 clean               - Clean the service dir
 poop                - Poop

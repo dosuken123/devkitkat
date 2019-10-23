@@ -198,7 +198,7 @@ test
   context 'when executes clone' do
     it 'clones a repository', slow: true do
       in_tmp_dir(sample_yml) do |dir|
-        execute_devkitkat(%w[clone rails --depth 1])
+        execute_devkitkat(%w[clone rails --env-var GIT_DEPTH=1])
 
         expect(File.read('services/rails/src/.git/config'))
           .to include("url = https://github.com/dosuken123/devkitkat-example-rails.git")

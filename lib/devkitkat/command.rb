@@ -62,18 +62,6 @@ module Devkitkat
           options[:debug] = v
         end
 
-        opts.on("-d", "--depth DEPTH", "Git depth for pull/fetch") do |v|
-          options[:git_depth] = v
-        end
-
-        opts.on("-r", "--remote REMOTE", "Git remote") do |v|
-          options[:git_remote] = v
-        end
-
-        opts.on("-b", "--branch BRANCH", "Git branch") do |v|
-          options[:git_branch] = v
-        end
-
         opts.on("-t", "--tty", "TTY mode. In this mode, log won't be emitted.") do |v|
           options[:tty] = v
         end
@@ -95,7 +83,7 @@ module Devkitkat
         opts.separator "help                - Show help"
         opts.separator ""
         opts.separator "Predefined scripts:"
-        opts.separator "clone               - Clone repository"
+        opts.separator "clone               - Clone repository (Available options: `GIT_DEPTH`)"
         opts.separator "pull                - Pull latest source code"
         opts.separator "clean               - Clean the service dir"
         opts.separator "poop                - Poop"
