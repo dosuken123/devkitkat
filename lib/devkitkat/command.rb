@@ -33,7 +33,7 @@ module Devkitkat
     end
 
     def kit_root
-      Dir.pwd # TODO: root_path
+      options[:root_path] || Dir.pwd
     end
 
     private

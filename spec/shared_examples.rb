@@ -193,6 +193,18 @@ test
         execute_devkitkat(%w[poop system])
       end
     end
+
+    context 'when root path is specified' do
+      it 'executes correctly' do
+        in_tmp_dir(sample_yml) do |dir|
+          new_dir = "#{dir}/services/rails/src"
+          FileUtils.mkdir_p(new_dir)
+          Dir.chdir new_dir
+
+          expect { execute_devkitkat(['--path', dir, 'poop']) }.not_to raise_error
+        end
+      end
+    end
   end
 
   context 'when executes clone' do
