@@ -349,4 +349,23 @@ test
       end
     end
   end
+
+  context 'when executes show-variables' do
+    it 'prints correct variables' do
+      in_tmp_dir(sample_yml) do |dir|
+        execute_devkitkat(%w[show-variables rails])
+
+        dir = root_dir if defined?(root_dir)
+
+        expect(File.read('services/rails/log/show-variables.log'))
+          .to match(%r{DK_APPLICATION=.*devkitkat.*})
+        expect(File.read('services/rails/log/show-variables.log'))
+          .to match(%r{DK_SELF_DIR=.*#{dir}/services/rails.*})
+        expect(File.read('services/rails/log/show-variables.log'))
+          .to match(%r{RAILS_ENV=.*development.*})
+        expect(File.read('services/rails/log/show-variables.log'))
+          .to match(%r{GEM_PATH=.*#{dir}/services/rails/cache.*})
+      end
+    end
+  end
 end

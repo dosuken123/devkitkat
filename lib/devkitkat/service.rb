@@ -250,6 +250,10 @@ fi
       executor.write(%Q{#{args.join(' ')}})
     end
 
+    def show_variables
+      executor.write(%Q{export})
+    end
+
     def executor
       @executor ||= Executor.new(self)
     end
