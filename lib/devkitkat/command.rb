@@ -87,6 +87,7 @@ module Devkitkat
         opts.separator "pull                - Pull latest source code"
         opts.separator "clean               - Clean the service dir"
         opts.separator "poop                - Poop"
+        opts.separator "show-variables      - Show all variables via 'export' command"
       end
     end
 
