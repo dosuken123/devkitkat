@@ -223,6 +223,7 @@ fi
     def pull
       return unless repo_defined?
 
+      executor.write("cd #{src_dir}")
       executor.write("git pull origin master")
     end
 
