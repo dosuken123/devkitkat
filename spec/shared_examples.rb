@@ -297,7 +297,7 @@ test
             execute_devkitkat(%w[add-script data test])
             File.write('services/postgres/script/test', long_script)
             File.write('services/redis/script/test', failed_script)
-            expect { execute_devkitkat(%w[test data]) }.to raise_error(SystemExit)
+            expect { execute_devkitkat(%w[test data]) }.to raise_error(SignalException)
 
             expect(File.read('services/postgres/log/test.log'))
               .not_to match(/Finished long task/)

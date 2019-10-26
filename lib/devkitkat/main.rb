@@ -24,10 +24,16 @@ module Devkitkat
         end
       end
 
-      exit(1) unless results&.all? { |result| result == true }
+      terminate_process_group! unless results&.all? { |result| result == true }
     end
 
     private
+
+    def terminate_process_group!
+      pgid = Process.getpgid(Process.pid)
+
+      Process.kill('TERM', -pgid)
+    end
 
     def target_services
       @target_services ||= config.resolve!(command.target, exclude: command.options[:exclude])
