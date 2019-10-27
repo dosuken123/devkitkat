@@ -41,7 +41,7 @@ module Devkitkat
     end
 
     def print_log_paths
-      return if command.interactive?
+      return if command.interactive? || command.quiet?
 
       log_paths = target_services.map(&:log_path)
       puts %Q{See the log at \n#{log_paths.join("\n")}}

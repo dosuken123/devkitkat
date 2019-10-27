@@ -24,6 +24,10 @@ module Devkitkat
       options[:debug]
     end
 
+    def quiet?
+      options[:quiet]
+    end
+
     def tmp_dir
       File.join(kit_root, '.devkitkat')
     end
@@ -44,8 +48,8 @@ module Devkitkat
         opts.separator ""
         opts.separator "Options:"
 
-        opts.on("-p", "--path PATH", "The root path of the .devkitkat.yml") do |v|
-          options[:root_path] = v
+        opts.on("-d", "--debug", "Debug mode") do |v|
+          options[:debug] = v
         end
 
         opts.on("-e", "--exclude SERVICE", "Exclude serviced from the specified target") do |v|
@@ -58,21 +62,25 @@ module Devkitkat
           options[:variables].merge!(Hash[*v.split('=')])
         end
 
-        opts.on("-d", "--debug", "Debug mode") do |v|
-          options[:debug] = v
+        opts.on("-h", "--help", "Show help") do |v|
+          show_help
         end
 
         opts.on("-i", "--interactive", "Interactive mode. STDOUT is streamed in console.") do |v|
           options[:interactive] = v
         end
 
+        opts.on("-p", "--path PATH", "The root path of the .devkitkat.yml") do |v|
+          options[:root_path] = v
+        end
+
+        opts.on("-q", "--quiet", 'Quiet mode') do |v|
+          options[:quiet] = v
+        end
+
         opts.on("-v", "--version", "Show version") do |v|
           puts Devkitkat::VERSION
           exit
-        end
-
-        opts.on("-h", "--help", "Show help") do |v|
-          show_help
         end
 
         opts.separator ""
