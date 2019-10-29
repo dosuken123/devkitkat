@@ -52,6 +52,7 @@ set -e
         executor.write(script_path)
       elsif respond_to?(method, true)
         executor.write(%Q{echo "This script is a predefined script provided by devkitkat."})
+        executor.write("set -e")
         send(method)
       end
 
@@ -224,6 +225,7 @@ fi
       return unless repo_defined?
 
       executor.write("cd #{src_dir}")
+      executor.write("git checkout master")
       executor.write("git pull origin master")
     end
 

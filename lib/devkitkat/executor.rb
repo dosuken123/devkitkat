@@ -10,7 +10,6 @@ module Devkitkat
 
     SCRIPT_HEADER = <<-EOS
 #!/bin/bash
-set -e
     EOS
 
     def initialize(service)
