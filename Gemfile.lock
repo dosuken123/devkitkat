@@ -39,7 +39,7 @@ GEM
       method_source (~> 0.9.0)
     pry-nav (0.3.0)
       pry (>= 0.9.10, < 0.13.0)
-    rake (10.5.0)
+    rake (13.0.1)
     require_all (3.0.0)
     rspec (3.8.0)
       rspec-core (~> 3.8.0)
@@ -68,7 +68,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.17)
   devkitkat!
-  rake (~> 10.0)
+  rake (~> 13.0)
   rspec (~> 3.0)
   rspec-temp_dir (~> 1.1.0)
 
