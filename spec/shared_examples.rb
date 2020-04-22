@@ -36,7 +36,7 @@ test()
   let(:function_script) do
     <<-EOS
 #!/bin/bash
-source ${DK_SYSTEM_SHARED_SCRIPT_DIR}
+source ${DK_SYSTEM_SHARED_SCRIPT_PATH}
 
 test
     EOS
@@ -168,29 +168,13 @@ test
   end
 
   context 'when executes poop' do
-    it 'poops when no target is specified' do
-      in_tmp_dir(sample_yml) do
-        expect_any_instance_of(Devkitkat::Service).to receive(:poop) {}
-
-        execute_devkitkat(%w[poop])
-      end
-    end
-
     it 'logs that a predefined script is executed' do
       in_tmp_dir(sample_yml) do
         execute_devkitkat(%w[poop])
 
         expect(File.read('services/system/log/poop.log'))
-          .to match(/This script is a predefined script provided by devkitkat./)
+          .to match(/INFO: This script is a predefined script in devkitkat./)
         expect(File.read('services/system/log/poop.log')).to match(/💩/)
-      end
-    end
-
-    it 'poops when system is specified' do
-      in_tmp_dir(sample_yml) do
-        expect_any_instance_of(Devkitkat::Service).to receive(:poop) {}
-
-        execute_devkitkat(%w[poop system])
       end
     end
 
@@ -286,7 +270,7 @@ test
         execute_devkitkat(%w[test rails])
 
         expect(File.read('services/rails/log/test.log'))
-          .to match(/This script is a custom script provided by you./)
+          .to match(/INFO: This script is a custom script/)
       end
     end
 
@@ -298,9 +282,9 @@ test
             File.write('services/postgres/script/test', long_script)
             File.write('services/redis/script/test', failed_script)
 
-            expect_any_instance_of(Devkitkat::Main)
+            expect_any_instance_of(Devkitkat::Processor)
               .to receive(:terminate_process_group!)
-            execute_devkitkat(%w[test data])
+            execute_devkitkat(%w[test data], ignore_termination: false)
 
             expect(File.read('services/postgres/log/test.log'))
               .not_to match(/Finished long task/)

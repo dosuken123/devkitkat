@@ -3,4 +3,4 @@ require 'bundler/setup' if ENV['DEVKITKAT_DEBUG']
 require "devkitkat"
 require 'pry'
 
-Devkitkat::Main.new.execute
+Devkitkat::Main.execute

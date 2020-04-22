@@ -27,7 +27,11 @@ ensure
   Dir.chdir cur_dir
 end
 
-def execute_devkitkat(cmd)
+def execute_devkitkat(cmd, ignore_termination: true)
+  if ignore_termination
+    allow_any_instance_of(Devkitkat::Processor).to receive(:terminate_process_group!)
+  end
+
   ARGV.replace cmd
-  Devkitkat::Main.new.execute
+  Devkitkat::Main.execute
 end

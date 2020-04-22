@@ -1,9 +1,10 @@
+require 'yaml'
+
 module Devkitkat
   class Config
     DEVKITKAT_FILE_NAME = '.devkitkat.yml'
     HIDDEN_SERVICES = %w[system]
     DEFAULT_APPLICATION_NAME = 'devkitkat'
-    DEFAULT_IMAGE = 'registry.gitlab.com/dosuken123/thin-gdk/thin-gdk-monolith:master'
 
     attr_reader :devkitkat_yml, :kit_root
 
@@ -18,34 +19,34 @@ module Devkitkat
 
     def resolve!(target, exclude: nil)
       services = if target.nil? || target == 'system'
-                   %w[system]
-                 elsif target == 'all'
-                   all_services
-                 elsif group = find_group(target)
-                   services_for_group(group)
-                 elsif services = find_comma_separated_services(target)
+                  %w[system]
+                elsif target == 'all'
+                  all_services
+                elsif group = find_group(target)
+                  services_for_group(group)
+                elsif services = find_comma_separated_services(target)
                   services
-                 elsif service = find_service(target)
-                   [service]
-                 else
-                   raise_error(target)
-                 end
+                elsif service = find_service(target)
+                  [service]
+                else
+                  raise_error(target)
+                end
 
       services = services - exclude if exclude
 
       services
     end
 
-    def environment_type
-      if devkitkat_yml.key?('image')
-        'docker'
-      else
-        'local'
-      end
+    def machine_driver
+      devkitkat_yml.dig('machine', 'driver') || 'none'
     end
 
-    def image
-      devkitkat_yml.fetch('image', DEFAULT_IMAGE)
+    def machine_location
+      devkitkat_yml.dig('machine', 'location') || 'local'
+    end
+
+    def machine_image
+      devkitkat_yml.dig('machine', 'image')
     end
 
     def application

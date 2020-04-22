@@ -1,3 +1,5 @@
+require 'optparse'
+
 module Devkitkat
   class Command
     attr_reader :options, :script, :target, :args
@@ -38,6 +40,10 @@ module Devkitkat
 
     def kit_root
       options[:root_path] || Dir.pwd
+    end
+
+    def name
+      script.tr('-', '_')
     end
 
     private

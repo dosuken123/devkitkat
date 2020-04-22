@@ -34,4 +34,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "ruby-progressbar", "~> 1.10.1"
   spec.add_runtime_dependency "colorize", "~> 0.8.1"
   spec.add_runtime_dependency "docker-api", "~> 1.34.2"
+  spec.add_runtime_dependency "require_all", "~> 3.0.0"
 end
