@@ -3,7 +3,7 @@ shared_examples_for 'service execution' do
     <<-EOS
 #!/bin/bash
 set -e
-sleep 5s
+sleep 30s
 echo "Finished long task"
     EOS
   end

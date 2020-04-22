@@ -14,6 +14,10 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  config.before(:suite) do
+    `docker rm -f $(docker ps -a -q)`
+  end
 end
 
 def in_tmp_dir(devkitkat_yml_path)

@@ -57,9 +57,5 @@ module Devkitkat
     def shared_script_path
       File.join(script_dir, 'shared')
     end
-
-    def container_name
-      "#{config.application}-#{name}"
-    end
   end
 end
