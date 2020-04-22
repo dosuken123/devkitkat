@@ -11,6 +11,11 @@ module Devkitkat
         def available?
           !command.interactive?
         end
+
+        def new_file
+          FileUtils.rm_f(service.log_path)
+          FileUtils.mkdir_p(service.log_dir)
+        end
       end
     end
   end

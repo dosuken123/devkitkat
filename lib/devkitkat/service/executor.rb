@@ -16,8 +16,13 @@ module Devkitkat
       end
 
       def execute
-        reset_log
-        with_script { execute! }
+        logger.new_file
+
+        scripter.new_file do
+          if prepare_script
+            execute!
+          end
+        end
 
         true
       rescue ScriptError => e
@@ -28,7 +33,7 @@ module Devkitkat
 
       private
 
-      def with_script
+      def prepare_script
         scripter.write(variables.to_script)
         scripter.write(logger.to_script) if logger.available?
 
@@ -39,12 +44,10 @@ module Devkitkat
           scripter.write(%Q{echo "INFO: This script is a predefined script in devkitkat."})
           scripter.write(predefined_command.to_script)
         else
-          return
+          false
         end
 
-        yield
-      ensure
-        scripter.delete_file
+        true
       end
 
       def execute!
@@ -55,11 +58,6 @@ module Devkitkat
         end
       ensure
         driver.cleanup
-      end
-
-      def reset_log
-        FileUtils.rm_f(service.log_path)
-        FileUtils.mkdir_p(service.log_dir)
       end
 
       def driver
