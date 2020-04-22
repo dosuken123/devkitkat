@@ -5,11 +5,11 @@ RSpec.describe Devkitkat do
     expect(Devkitkat::VERSION).not_to be nil
   end
 
-  # context 'with local.devkitkat.yml' do
-  #   let(:sample_yml) { 'spec/fixtures/local.devkitkat.yml' }
+  context 'with local.devkitkat.yml' do
+    let(:sample_yml) { 'spec/fixtures/local.devkitkat.yml' }
 
-  #   it_behaves_like 'service execution'
-  # end
+    it_behaves_like 'service execution'
+  end
 
   context 'with docker.devkitkat.yml', slow: true do
     let(:sample_yml) { 'spec/fixtures/docker.devkitkat.yml' }
