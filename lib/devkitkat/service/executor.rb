@@ -1,8 +1,8 @@
 require 'require_all'
-require_all 'lib/devkitkat/service/concerns/service_initializer.rb'
-require_all 'lib/devkitkat/service/driver/*.rb'
-require_all 'lib/devkitkat/service/executor/*.rb'
-require_all 'lib/devkitkat/service/predefined_command/*.rb'
+require_rel 'concerns/*.rb'
+require_rel 'driver/*.rb'
+require_rel 'executor/*.rb'
+require_rel 'predefined_command/*.rb'
 
 module Devkitkat
   class Service

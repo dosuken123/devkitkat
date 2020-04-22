@@ -28,7 +28,7 @@ module Devkitkat
         end
 
         private
-    
+
         def rewrite_root_path!
           content = File.read(script_file)
           new_content = content.gsub(command.kit_root, ROOT_IN_CONTAINER)
@@ -48,11 +48,11 @@ module Devkitkat
         def docker_image
           config.machine_image
         end
-    
+
         def container
           @container ||= ::Docker::Container.create(container_parameter)
         end
-    
+
         def container_parameter
           params = {
             'Cmd' => %w[tail -f],
@@ -136,7 +136,7 @@ module Devkitkat
 
           exec!(['chown', '-R', "#{user_name}:#{user_name}", ROOT_IN_CONTAINER])
         end
-    
+
         def stop_container
           # container.stop
           container.remove(force: true)
