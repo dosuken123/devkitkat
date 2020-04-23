@@ -11,7 +11,7 @@ module Devkitkat
         end
 
         def available?
-          repo_defined?
+          service.repo_defined?
         end
       end
     end
