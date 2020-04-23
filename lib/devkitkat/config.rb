@@ -53,6 +53,10 @@ module Devkitkat
       devkitkat_yml.dig('machine', 'extra_hosts')
     end
 
+    def machine_network_mode
+      devkitkat_yml.dig('machine', 'network_mode')
+    end
+
     def application
       devkitkat_yml.fetch('application', DEFAULT_APPLICATION_NAME)
     end
