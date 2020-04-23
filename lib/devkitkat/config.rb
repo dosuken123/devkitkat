@@ -49,6 +49,10 @@ module Devkitkat
       devkitkat_yml.dig('machine', 'image')
     end
 
+    def machine_extra_hosts
+      devkitkat_yml.dig('machine', 'extra_hosts')
+    end
+
     def application
       devkitkat_yml.fetch('application', DEFAULT_APPLICATION_NAME)
     end

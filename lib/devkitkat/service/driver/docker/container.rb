@@ -91,6 +91,12 @@ module Devkitkat
               )
             end
 
+            if config.machine_extra_hosts
+              params.deep_merge!(
+                'HostConfig' => { 'ExtraHosts' => config.machine_extra_hosts }
+              )
+            end
+
             params
           end
 
