@@ -37,6 +37,7 @@ module Devkitkat
           private
 
           def safe_exec(cmds, params)
+            params.merge!(wait: 604800) # Default timeout is 1 minute, so setting 1 week instead
             stdout_messages, stderr_messages, exit_code =
               container.exec(cmds, params)
 
@@ -133,6 +134,7 @@ module Devkitkat
               '--disabled-password',
               user_name])
 
+            prepare!(['chown', "#{user_name}:#{user_name}", ROOT_IN_CONTAINER])
             prepare!(['chown', '-R', "#{user_name}:#{user_name}", "#{ROOT_IN_CONTAINER}/services/#{service.name}"])
           end
 
