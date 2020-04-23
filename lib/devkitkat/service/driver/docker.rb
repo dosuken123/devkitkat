@@ -6,18 +6,13 @@ module Devkitkat
   class Service
     class Driver
       class Docker < Base
-        attr_reader :script_file
-
         def prepare
           image.pull
           container.start
         end
 
         def execute(script_file)
-          @script_file = script_file
-
-          rewrite_root_path!
-          new_path = script_path_in_container
+          new_path = rewrite_root_path!(script_file)
 
           container.exec([new_path])
         end
@@ -28,13 +23,11 @@ module Devkitkat
 
         private
 
-        def rewrite_root_path!
+        def rewrite_root_path!(script_file)
           content = File.read(script_file)
           new_content = content.gsub(command.kit_root, Container::ROOT_IN_CONTAINER)
           File.write(script_file, new_content)
-        end
 
-        def script_path_in_container
           relative_path = script_file.delete_prefix(command.kit_root)
           File.join(Container::ROOT_IN_CONTAINER, relative_path)
         end

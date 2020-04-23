@@ -30,14 +30,6 @@ module Devkitkat
       options[:quiet]
     end
 
-    def tmp_dir
-      File.join(kit_root, '.devkitkat')
-    end
-
-    def create_tmp_dir
-      FileUtils.mkdir_p(tmp_dir)
-    end
-
     def kit_root
       options[:root_path] || Dir.pwd
     end

@@ -9,7 +9,7 @@ module Devkitkat
         EOS
 
         def file_path
-          File.join(command.tmp_dir, "script-#{service.name}-#{command.script}")
+          File.join(service.dir, "script-#{service.name}-#{command.script}")
         end
 
         def new_file
@@ -30,13 +30,17 @@ module Devkitkat
         private
 
         def create_file
-          command.create_tmp_dir
+          ensure_service_root_dir
           File.write(file_path, SCRIPT_HEADER)
           File.chmod(0777, file_path)
         end
 
         def delete_file
           FileUtils.rm_f(file_path)
+        end
+
+        def ensure_service_root_dir
+          FileUtils.mkdir_p(service.root_dir)
         end
       end
     end

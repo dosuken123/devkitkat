@@ -264,11 +264,11 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 **Execute only fast tests**
 
-`bundle exec rspec /home/shinya/workspace/devkitkat/spec/devkitkat_spec.rb -t ~slow`
+`bundle exec rspec -t ~slow`
 
 **Execute only slow tests**
 
-`bundle exec rspec /home/shinya/workspace/devkitkat/spec/devkitkat_spec.rb -t slow`
+`bundle exec rspec -t slow`
 
 ## Contributing
 

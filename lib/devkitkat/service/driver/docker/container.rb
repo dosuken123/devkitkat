@@ -75,7 +75,7 @@ module Devkitkat
               'Image' => image,
               'name' => name,
               'HostConfig' => {
-                'Binds' => ["#{command.kit_root}:#{ROOT_IN_CONTAINER}"]
+                'Binds' => all_mounts
               }
             }
 
@@ -91,6 +91,22 @@ module Devkitkat
             end
 
             params
+          end
+
+          def all_mounts
+            (read_write_mounts + read_only_mounts).compact
+          end
+
+          def read_write_mounts
+            ["#{service.dir}:#{ROOT_IN_CONTAINER}/services/#{service.name}"]
+          end
+
+          def read_only_mounts
+            (config.all_services - [service.name]).map do |service_name|
+              service = Service.new(service_name, config, command)
+              FileUtils.mkdir_p(service.dir)
+              "#{service.dir}:#{ROOT_IN_CONTAINER}/services/#{service.name}:ro"
+            end
           end
 
           def user_name
@@ -117,7 +133,7 @@ module Devkitkat
               '--disabled-password',
               user_name])
 
-            prepare!(['chown', '-R', "#{user_name}:#{user_name}", ROOT_IN_CONTAINER])
+            prepare!(['chown', '-R', "#{user_name}:#{user_name}", "#{ROOT_IN_CONTAINER}/services/#{service.name}"])
           end
 
           def prepare!(cmds, params = {})

@@ -34,12 +34,12 @@ module Devkitkat
       end
     end
 
-    def services_dir
+    def root_dir
       File.join(command.kit_root, 'services')
     end
 
     def dir
-      File.join(services_dir, name)
+      File.join(root_dir, name)
     end
 
     def log_path
