@@ -11,10 +11,10 @@ module Devkitkat
 
           def start
             if @container = find
-              container.start
+              container.restart
             else
               @container = create
-              container.start
+              container.restart
               create_host_user
             end
           end
@@ -136,8 +136,6 @@ module Devkitkat
           end
 
           def create_host_user
-            return if config.machine_root_user
-
             prepare!(['addgroup', '--gid', group_id, user_name])
 
             prepare!(['adduser',

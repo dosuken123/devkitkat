@@ -14,11 +14,7 @@ module Devkitkat
         def execute(script_file)
           new_path = rewrite_root_path!(script_file)
 
-          if config.machine_root_user
-            container.exec_as_root([new_path])
-          else
-            container.exec([new_path])
-          end
+          container.exec([new_path])
         end
 
         def cleanup
