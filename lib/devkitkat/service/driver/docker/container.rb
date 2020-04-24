@@ -117,7 +117,7 @@ module Devkitkat
           end
 
           def allowed_by_extra_write_accesses?(service)
-            config.extra_write_accesses&.any? do |access|
+            config.machine_extra_write_accesses&.any? do |access|
               from, _, to = access.split(':')
               self.service.name == from && service.name == to
             end
@@ -136,6 +136,8 @@ module Devkitkat
           end
 
           def create_host_user
+            return if config.machine_root_user
+
             prepare!(['addgroup', '--gid', group_id, user_name])
 
             prepare!(['adduser',
