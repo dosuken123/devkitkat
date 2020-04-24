@@ -55,6 +55,8 @@ module Devkitkat
     end
 
     def shared_script_path
+      return unless system?
+
       File.join(script_dir, 'shared')
     end
   end

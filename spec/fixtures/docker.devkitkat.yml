@@ -1,3 +1,5 @@
+application: devkitkat-test
+
 machine:
   driver: docker
   image: registry.gitlab.com/dosuken123/thin-gdk/thin-gdk-monolith:master

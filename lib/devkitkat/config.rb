@@ -57,6 +57,10 @@ module Devkitkat
       devkitkat_yml.dig('machine', 'network_mode')
     end
 
+    def extra_write_accesses
+      devkitkat_yml.dig('machine', 'extra_write_accesses')
+    end
+
     def application
       devkitkat_yml.fetch('application', DEFAULT_APPLICATION_NAME)
     end

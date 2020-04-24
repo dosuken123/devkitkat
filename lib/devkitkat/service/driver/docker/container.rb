@@ -103,18 +103,23 @@ module Devkitkat
           end
 
           def all_mounts
-            (read_write_mounts + read_only_mounts).compact
-          end
-
-          def read_write_mounts
-            ["#{service.dir}:#{ROOT_IN_CONTAINER}/services/#{service.name}"]
-          end
-
-          def read_only_mounts
-            (config.all_services - [service.name]).map do |service_name|
+            config.all_services.map do |service_name|
               service = Service.new(service_name, config, command)
+
               FileUtils.mkdir_p(service.dir)
-              "#{service.dir}:#{ROOT_IN_CONTAINER}/services/#{service.name}:ro"
+
+              if self.service.name == service_name || service.system? || allowed_by_extra_write_accesses?(service)
+                "#{service.dir}:#{ROOT_IN_CONTAINER}/services/#{service.name}"
+              else
+                "#{service.dir}:#{ROOT_IN_CONTAINER}/services/#{service.name}:ro"
+              end
+            end
+          end
+
+          def allowed_by_extra_write_accesses?(service)
+            config.extra_write_accesses&.any? do |access|
+              from, _, to = access.split(':')
+              self.service.name == from && service.name == to
             end
           end
 

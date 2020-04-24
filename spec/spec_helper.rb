@@ -16,7 +16,7 @@ RSpec.configure do |config|
   end
 
   config.before(:suite) do
-    `docker rm -f $(docker ps -a -q)`
+    `docker rm -f $(docker ps -a -f name=devkitkat-test-* -q)`
   end
 end
 
