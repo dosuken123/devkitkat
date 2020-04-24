@@ -30,7 +30,7 @@ module Devkitkat
             safe_exec(cmds, params)
           end
 
-          def exec_as_host(cmds, params = {})
+          def exec_as_root(cmds, params = {})
             safe_exec(cmds, params)
           end
 
@@ -154,7 +154,7 @@ module Devkitkat
           end
 
           def prepare!(cmds, params = {})
-            unless exec_as_host(cmds, params)
+            unless exec_as_root(cmds, params)
               raise Driver::Base::PreparationError, "Failed to execute command in container. cmds: #{cmds}"
             end
           end
