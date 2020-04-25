@@ -46,6 +46,20 @@ download/prepare services. These are available keys.
 
 There are pre-occupied special keys, please do not use these keys in your config file: `services:system`, `services:self`
 
+### `machine:` key
+
+|Key                                         |Type        |Required|Default|Description|
+|---                                         |---         |---     |---|---|
+|`machine:`                                  |Hash        |No      |-|The machine to run the application|
+|`machine:driver`                            |String      |No      |-|The driver name, one of `none` or `docker`. Default is `none`.|
+|`machine:location`                          |String      |No      |-|The machine location, one of `local` or `remote`. Default is `local`.|
+|`machine:image`                             |String      |No      |-|The docker image used as the machine image.|
+|`machine:extra_hosts`                       |Array<String>|No      |-|Extra hosts to be added to `/etc/hosts` in the machine|
+|`machine:network_mode`                      |String      |No      |-|Docker Network Mode, one of `bridge`, `host`.|
+|`machine:extra_write_accesses`              |Array<String>|No      |-|Extra write access to each service. By default, a service mounts only own directory as read-write and mounts the other service directories as read-only volume. To add extra write access, you specify `'<service-name>:to:<service-name>'`|
+
+
+
 ## Sample `.devkitkat.yml` that runs services in local environment
 
 ```yaml
@@ -60,7 +74,9 @@ services:
 ## Sample `.devkitkat.yml` that runs services in docker containers
 
 ```yaml
-image: ruby:2.6
+machine:
+  driver: docker
+  image: your-dev-machine-image:latest
 
 services:
   web:

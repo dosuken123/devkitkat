@@ -4,7 +4,9 @@ module Devkitkat
       class Exec < Base
         def to_script
           <<~EOS
-            cd #{service.src_dir}
+            if [ -d "#{service.src_dir}" ]; then
+              cd #{service.src_dir}
+            fi
             #{command.args.join(' ')}
           EOS
         end

@@ -14,7 +14,11 @@ module Devkitkat
         def execute(script_file)
           new_path = rewrite_root_path!(script_file)
 
-          container.exec([new_path])
+          if command.interactive?
+            container.interactive_shell(new_path)
+          else
+            container.exec([new_path])
+          end
         end
 
         def cleanup

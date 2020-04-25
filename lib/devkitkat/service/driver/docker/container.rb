@@ -10,36 +10,49 @@ module Devkitkat
           attr_reader :container
 
           def start
-            if @container = find
+            @container = find
+
+            if command.interactive?
+              raise 'Container has not started yet for interactive session' unless @container
+              return
+            end
+
+            if @container
               container.restart
             else
               @container = create
-              container.restart
+              container.start
               create_host_user
             end
           end
 
           def stop
+            return if command.interactive?
             raise 'Container has not started yet' unless container
 
             container.stop
           end
 
-          def exec(cmds, params = {})
+          def exec(cmds, params = {}, &block)
             params.merge!(user: user_name)
-            safe_exec(cmds, params)
+            safe_exec(cmds, params, &block)
           end
 
-          def exec_as_root(cmds, params = {})
-            safe_exec(cmds, params)
+          def exec_as_root(cmds, params = {}, &block)
+            safe_exec(cmds, params, &block)
+          end
+
+          def interactive_shell(cmd)
+            # container.exec([new_path], tty: true, stdin: STDIN) { |stream, chunk| print "#{stream}" }
+            Kernel.exec('docker', 'exec', '-ti', '--user', user_name, name, cmd)
           end
 
           private
 
-          def safe_exec(cmds, params)
+          def safe_exec(cmds, params, &block)
             params.merge!(wait: 604800) # Default timeout is 1 minute, so setting 1 week instead
             stdout_messages, stderr_messages, exit_code =
-              container.exec(cmds, params)
+              container.exec(cmds, params, &block)
 
             if exit_code != 0 || command.debug?
               puts "#{self.class.name} - #{__callee__}: stdout_messages: #{stdout_messages} stderr_messages: #{stderr_messages} exit_code: #{exit_code}"
@@ -53,11 +66,6 @@ module Devkitkat
 
           def image
             config.machine_image
-          end
-
-          def name
-            @name ||=
-              "#{config.application}-#{service.name}-#{Digest::SHA1.hexdigest(command.kit_root)[8..12]}"
           end
 
           def find
@@ -121,6 +129,11 @@ module Devkitkat
               from, _, to = access.split(':')
               self.service.name == from && service.name == to
             end
+          end
+
+          def name
+            @name ||=
+              "#{config.application}-#{service.name}-#{Digest::SHA1.hexdigest(command.kit_root)[8..12]}"
           end
 
           def user_name
