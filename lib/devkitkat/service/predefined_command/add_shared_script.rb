@@ -15,6 +15,10 @@ module Devkitkat
         def available?
           service.system? && !File.exist?(service.shared_script_path)
         end
+
+        def machine_driver
+          'none'
+        end
       end
     end
   end

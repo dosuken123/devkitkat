@@ -59,5 +59,9 @@ module Devkitkat
 
       File.join(script_dir, 'shared')
     end
+
+    def machine_driver
+      config.service_hash(name).dig(:machine, :driver)
+    end
   end
 end

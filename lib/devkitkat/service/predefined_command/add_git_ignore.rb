@@ -23,6 +23,10 @@ EOL
         def file_path
           File.join(command.kit_root, '.gitignore')
         end
+
+        def machine_driver
+          'none'
+        end
       end
     end
   end

@@ -11,6 +11,10 @@ module Devkitkat
         def available?
           raise NotImplementedError
         end
+
+        def machine_driver
+          nil
+        end
       end
     end
   end

@@ -16,6 +16,10 @@ module Devkitkat
         def available?
           true
         end
+
+        def machine_driver
+          'none'
+        end
       end
     end
   end

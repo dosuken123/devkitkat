@@ -40,9 +40,11 @@ module Devkitkat
         if File.exist?(service.script_path)
           scripter.write(%Q{echo "INFO: This script is a custom script."})
           scripter.write(service.script_path)
+          @machine_driver = command.options[:driver]
         elsif predefined_command_available?
           scripter.write(%Q{echo "INFO: This script is a predefined script in devkitkat."})
           scripter.write(predefined_command.to_script)
+          @machine_driver = predefined_command.machine_driver
         else
           false
         end
@@ -51,6 +53,7 @@ module Devkitkat
       end
 
       def execute!
+        driver = get_driver_klass.new(service)
         driver.prepare
 
         driver.execute(scripter.file_path).tap do |result|
@@ -58,10 +61,6 @@ module Devkitkat
         end
       ensure
         driver.cleanup
-      end
-
-      def driver
-        @driver ||= driver_klass.new(service)
       end
 
       def scripter
@@ -80,8 +79,10 @@ module Devkitkat
         @predefined_command ||= predefined_command_klass.new(service)
       end
 
-      def driver_klass
-        Object.const_get("Devkitkat::Service::Driver::#{config.machine_driver.camelize}")
+      def get_driver_klass
+        driver = @machine_driver || service.machine_driver || config.machine_driver
+
+        Object.const_get("Devkitkat::Service::Driver::#{driver.camelize}")
       end
 
       def predefined_command_klass

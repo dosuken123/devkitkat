@@ -84,7 +84,8 @@ module Devkitkat
               'Image' => image,
               'name' => name,
               'HostConfig' => {
-                'Binds' => all_mounts
+                'Binds' => all_mounts,
+                'Privileged' => true
               }
             }
 
@@ -121,7 +122,7 @@ module Devkitkat
               else
                 "#{service.dir}:#{ROOT_IN_CONTAINER}/services/#{service.name}:ro"
               end
-            end
+            end.append('/var/run/docker.sock:/var/run/docker.sock')
           end
 
           def allowed_by_extra_write_accesses?(service)
@@ -162,6 +163,7 @@ module Devkitkat
 
             prepare!(['chown', "#{user_name}:#{user_name}", ROOT_IN_CONTAINER])
             prepare!(['chown', '-R', "#{user_name}:#{user_name}", "#{ROOT_IN_CONTAINER}/services/#{service.name}"])
+            prepare!(['usermod', '-aG', 'docker', user_name])
           end
 
           def prepare!(cmds, params = {})

@@ -46,6 +46,10 @@ module Devkitkat
         opts.separator ""
         opts.separator "Options:"
 
+        opts.on("-d", "--driver", "Machine Driver") do |v|
+          options[:driver] = v
+        end
+
         opts.on("-d", "--debug", "Debug mode") do |v|
           options[:debug] = v
         end
@@ -94,6 +98,7 @@ module Devkitkat
         opts.separator "clean               - Clean the service dir"
         opts.separator "poop                - Poop"
         opts.separator "show-variables      - Show all variables via 'export' command"
+        opts.separator "remove-containers   - Remove all related containers"
       end
     end
 
