@@ -61,7 +61,7 @@ module Devkitkat
     end
 
     def machine_driver
-      config.service_hash(name).dig(:machine, :driver)
+      config.service_hash(name).dig('machine', 'driver')
     end
   end
 end
