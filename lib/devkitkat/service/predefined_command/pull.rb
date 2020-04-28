@@ -13,6 +13,10 @@ module Devkitkat
         def available?
           service.repo_defined?
         end
+
+        def machine_driver
+          'none'
+        end
       end
     end
   end
