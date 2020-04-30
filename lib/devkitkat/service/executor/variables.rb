@@ -22,7 +22,7 @@ module Devkitkat
           variables << "export DK_MACHINE_DRIVER=#{config.machine_driver.to_s}"
           variables << "export DK_MACHINE_LOCATION=#{config.machine_location.to_s}"
           variables << "export DK_MACHINE_IMAGE=#{config.machine_image.to_s}"
-          variables << "export DK_MACHINE_EXTRA_HOSTS=#{config.machine_extra_hosts.join(',').to_s}"
+          variables << "export DK_MACHINE_EXTRA_HOSTS=#{config.machine_extra_hosts&.join(',').to_s}"
           variables << "export DK_MACHINE_NETWORK_MODE=#{config.machine_network_mode.to_s}"
           variables << "export DK_APPLICATION=#{config.application.to_s}"
           variables
