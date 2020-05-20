@@ -99,6 +99,7 @@ module Devkitkat
         opts.separator "poop                - Poop"
         opts.separator "show-variables      - Show all variables via 'export' command"
         opts.separator "remove-containers   - Remove all related containers"
+        opts.separator "start-container     - Start a container (dry-run)"
       end
     end
 
