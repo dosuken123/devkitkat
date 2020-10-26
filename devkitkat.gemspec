@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.executables   = "devkitkat"
   spec.require_paths = ["lib"]
 
-  spec.add_development_dependency "bundler", "~> 1.17"
+  spec.add_development_dependency "bundler", "~> 2.1.4"
   spec.add_development_dependency "rake", "~> 12.3.3"
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "rspec-temp_dir", "~> 1.1.0"
@@ -33,6 +33,6 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "parallel", "~> 1.17.0"
   spec.add_runtime_dependency "ruby-progressbar", "~> 1.10.1"
   spec.add_runtime_dependency "colorize", "~> 0.8.1"
-  spec.add_runtime_dependency "docker-api", "~> 1.34.2"
+  spec.add_runtime_dependency "docker-api", "~> 2.0.0"
   spec.add_runtime_dependency "require_all", "~> 3.0.0"
 end
