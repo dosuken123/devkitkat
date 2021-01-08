@@ -8,7 +8,7 @@ module Devkitkat
     attr_reader :name, :config, :command, :executor
 
     DIVISIONS = %w[src script data cache log example dockerfile].freeze
-    SERVICE_PROPERTIES = %w[repo host port]
+    SERVICE_PROPERTIES = %w[repo repo_ref host port]
 
     def initialize(name, config, command)
       @name, @config, @command = name, config, command
