@@ -145,6 +145,10 @@ module Devkitkat
             @group_id ||= `id -u`.delete("\n")
           end
 
+          def docker_group_id
+            @docker_group_id ||= `getent group docker | awk -F: '{ printf $3 }'`
+          end
+
           def user_id
             @user_id ||= `id -g`
           end
@@ -164,6 +168,7 @@ module Devkitkat
             prepare!(['chown', "#{user_name}:#{user_name}", ROOT_IN_CONTAINER])
             prepare!(['chown', '-R', "#{user_name}:#{user_name}", "#{ROOT_IN_CONTAINER}/services/#{service.name}"])
             prepare!(['usermod', '-aG', 'docker', user_name])
+            prepare!(['groupmod', '-g', docker_group_id, 'docker'])
           end
 
           def prepare!(cmds, params = {})
