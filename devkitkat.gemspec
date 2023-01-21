@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec-temp_dir", "~> 1.1.0"
   spec.add_runtime_dependency "pry", "~> 0.12.2"
   spec.add_runtime_dependency "pry-nav"
-  spec.add_runtime_dependency "activesupport", "~> 6.0.0"
+  spec.add_runtime_dependency "activesupport", ">= 6.0", "< 7.1"
   spec.add_runtime_dependency "parallel", "~> 1.17.0"
   spec.add_runtime_dependency "ruby-progressbar", "~> 1.10.1"
   spec.add_runtime_dependency "colorize", "~> 0.8.1"
