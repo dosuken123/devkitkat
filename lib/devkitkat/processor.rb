@@ -20,7 +20,7 @@ module Devkitkat
         # so we can't run in parallel.
         results << services.first.execute
       else
-        results = Parallel.map(services, progress: 'Executing', in_processes: 8) do |service|
+        results = Parallel.map(services, progress: 'Executing', in_processes: 16) do |service|
           service.execute.tap do |success|
             raise Parallel::Kill unless success
           end
