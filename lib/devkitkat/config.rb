@@ -61,6 +61,10 @@ module Devkitkat
       devkitkat_yml.dig('machine', 'extra_write_accesses')
     end
 
+    def machine_mount_host_tmp_dir
+      devkitkat_yml.dig('machine', 'mount_host_tmp_dir')
+    end
+
     def application
       devkitkat_yml.fetch('application', DEFAULT_APPLICATION_NAME)
     end

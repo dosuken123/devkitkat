@@ -112,17 +112,22 @@ module Devkitkat
           end
 
           def all_mounts
-            config.all_services.map do |service_name|
+            mounts = []
+
+            config.all_services.each do |service_name|
               service = Service.new(service_name, config, command)
 
               FileUtils.mkdir_p(service.dir)
 
               if self.service.name == service_name || service.system? || allowed_by_extra_write_accesses?(service)
-                "#{service.dir}:#{ROOT_IN_CONTAINER}/services/#{service.name}"
+                mounts.append("#{service.dir}:#{ROOT_IN_CONTAINER}/services/#{service.name}")
               else
-                "#{service.dir}:#{ROOT_IN_CONTAINER}/services/#{service.name}:ro"
+                mounts.append("#{service.dir}:#{ROOT_IN_CONTAINER}/services/#{service.name}:ro")
               end
-            end.append('/var/run/docker.sock:/var/run/docker.sock')
+            end
+
+            mounts.append('/tmp:/tmp') if mount_host_tmp_dir?(self.service.name)
+            mounts.append('/var/run/docker.sock:/var/run/docker.sock')
           end
 
           def allowed_by_extra_write_accesses?(service)
@@ -130,6 +135,10 @@ module Devkitkat
               from, _, to = access.split(':')
               self.service.name == from && service.name == to
             end
+          end
+
+          def mount_host_tmp_dir?(service)
+            config.machine_mount_host_tmp_dir&.any? { |svc| svc == service }
           end
 
           def name
