@@ -58,7 +58,7 @@ There are pre-occupied special keys, please do not use these keys in your config
 |`machine:extra_hosts`                       |Array<String>|No      |-|Extra hosts to be added to `/etc/hosts` in the machine|
 |`machine:network_mode`                      |String      |No      |-|Docker Network Mode, one of `bridge`, `host`.|
 |`machine:extra_write_accesses`              |Array<String>|No      |-|Extra write access to each service. By default, a service mounts only own directory as read-write and mounts the other service directories as read-only volume. To add extra write access, you specify `'<service-name>:to:<service-name>'`|
-
+|`machine:mount_host_tmp_dir`                |Array<String>|No      |-| Mount `/tmp` dir of the host machine. Specify service names in the list. |
 
 
 ## Sample `.devkitkat.yml` that runs services in local environment
